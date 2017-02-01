@@ -15,33 +15,8 @@ import javax.swing.ListCellRenderer;
 public class RaceFrame extends javax.swing.JFrame {
 
     public static Random Random;
-    public static String[] snailNames = {
-        "Winfried", "Bertha", "Hannibal", "Hüftgelenk",
-        "Goliath", "Moses", "Petrus", "Nikolaus",
-        "Python", "Baumhardt", "Felix", "Osiris",
-        "Waldi", "Luna", "Schnurri", "Sushi",
-        "Deidre", "Wolfi", "Blümchen", "Bo-bobo",
-        "Günther", "Horst-Dieter", "Kevin", "Moritz",
-        "Anthony", "Buchwirt", "Linda", "Eckhardt"
-    };
-    public static String[] raceNames = {
-        "Rennen des Jahres", "Irgendein Rennen", "Rennen Nummer Drei",
-        "Das große Kriechen", "Grand Kriech", "Marathon",
-        "Entenlauf", "Schneckenrennen", "Wettkriechen",
-        "Aus die Schneck' - Der letzte Tag", "Wanderschnecken auf Eilkurs",
-        "Ein puitziges Rennen"
-    };
-    public static String[] races = {
-        "Audi", "LKW", "Airbus", "Schäferhund",
-        "Bernhardiner", "Dackel", "Perser", "Siam",
-        "Chihuahua", "Pago-Pago", "Moai", "Baum",
-        "Kaninchen", "Hase", "Pui", "Mäuschen",
-        "Pudel", "Affenbrotbaum", "Goldfisch", "U-Boot",
-        "Bim", "Tram", "Zug", "Kreuzfahrtschiff",
-        "UFO", "Banane", "Meerschweinchen", "Treppenstufe",
-        "Schienenersatzverkehr", "Wanderer", "Schwimmer", "Knirps",
-        "Tänzerin", "Aromalady"
-    };
+
+    public static ArrayList<String> snailNames;
 
     private final JProgressBar[] progressBars;
     private Thread snailUpdateThread;
@@ -49,10 +24,9 @@ public class RaceFrame extends javax.swing.JFrame {
     private Rennen currentRace;
     private final Wettbuero wettbuero;
 
-    /**
-     * Creates new form RaceFrame
-     */
     public RaceFrame() {
+	ConfigManager.loadConfigFile();
+	snailNames = ConfigManager.getSnailNames();
         Random = new Random();
         initComponents();
         progressBars = new JProgressBar[]{
@@ -62,9 +36,9 @@ public class RaceFrame extends javax.swing.JFrame {
             snail4Progress
         };
         snailListView.setModel(new DefaultListModel<>());
-        // Wettbüro instanzieren
+        // Initialize the Wettbüro
         wettbuero = new Wettbuero(1.5);
-        // Rennen erstellen
+        // Create new race
         setupRace();
     }
 
@@ -72,7 +46,7 @@ public class RaceFrame extends javax.swing.JFrame {
         int newGoal = Random.nextInt(400) + 100;
         currentRace
                 = new Rennen(
-                        raceNames[Random.nextInt(raceNames.length)],
+                        ConfigManager.getRandomRaceName(Random),
                         newGoal
                 );
         this.setTitle(currentRace.getName() + " (Rennen bis " + newGoal + ")");
@@ -91,14 +65,14 @@ public class RaceFrame extends javax.swing.JFrame {
         for (int i = 0; i < number; i++) {
             int nameIndex;
             do {
-                nameIndex = Random.nextInt(snailNames.length);
+                nameIndex = Random.nextInt(snailNames.size());
             } while (usedNameIndices.contains(nameIndex));
             usedNameIndices.add(nameIndex);
             currentRace.addRennschnecke(
                     new Rennschnecke(
                             Random.nextInt(3) + 2,
-                            snailNames[nameIndex],
-                            races[Random.nextInt(races.length)]
+                            snailNames.get(nameIndex),
+                            ConfigManager.getRandomSnailRace(Random)
                     ));
         }
 
