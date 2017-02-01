@@ -20,6 +20,7 @@ public class RaceFrame extends javax.swing.JFrame {
         "Goliath", "Moses", "Petrus", "Nikolaus",
         "Python", "Baumhardt", "Felix", "Osiris",
         "Waldi", "Luna", "Schnurri", "Sushi",
+        "Deidre", "Wolfi", "Blümchen", "Bo-bobo",
         "Günther", "Horst-Dieter", "Kevin", "Moritz",
         "Anthony", "Buchwirt", "Linda", "Eckhardt"
     };
@@ -27,16 +28,19 @@ public class RaceFrame extends javax.swing.JFrame {
         "Rennen des Jahres", "Irgendein Rennen", "Rennen Nummer Drei",
         "Das große Kriechen", "Grand Kriech", "Marathon",
         "Entenlauf", "Schneckenrennen", "Wettkriechen",
-        "Aus die Schneck' - Der letzte Tag", "Wanderschnecken auf Eilkurs"
+        "Aus die Schneck' - Der letzte Tag", "Wanderschnecken auf Eilkurs",
+        "Ein puitziges Rennen"
     };
     public static String[] races = {
         "Audi", "LKW", "Airbus", "Schäferhund",
         "Bernhardiner", "Dackel", "Perser", "Siam",
         "Chihuahua", "Pago-Pago", "Moai", "Baum",
+        "Kaninchen", "Hase", "Pui", "Mäuschen",
         "Pudel", "Affenbrotbaum", "Goldfisch", "U-Boot",
         "Bim", "Tram", "Zug", "Kreuzfahrtschiff",
         "UFO", "Banane", "Meerschweinchen", "Treppenstufe",
-        "Schienenersatzverkehr", "Wanderer", "Schwimmer", "Knirps"
+        "Schienenersatzverkehr", "Wanderer", "Schwimmer", "Knirps",
+        "Tänzerin", "Aromalady"
     };
 
     private final JProgressBar[] progressBars;

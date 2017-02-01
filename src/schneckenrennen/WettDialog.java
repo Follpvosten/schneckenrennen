@@ -1,6 +1,7 @@
 package schneckenrennen;
 
 import java.awt.Component;
+import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
@@ -79,6 +80,22 @@ public class WettDialog extends javax.swing.JDialog {
 
         return builder.toString();
     }
+    
+    private void processReturn() {
+        String errors = getInputErrors();
+        if (errors.isEmpty()) {
+            Number einsatz = (Number) einsatzInput.getValue();
+            result = new Wettbuero.Wette(
+                    einsatz.doubleValue(),
+                    nameInput.getText(),
+                    snailList.getSelectedValue()
+            );
+            setVisible(false);
+            dispose();
+        } else {
+            JOptionPane.showMessageDialog(this, errors);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -101,6 +118,11 @@ public class WettDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Wette Abgeben");
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                formKeyReleased(evt);
+            }
+        });
 
         nameLabel.setText("Name:");
 
@@ -194,20 +216,14 @@ public class WettDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cancelClickedHandler
 
     private void okClickedHandler(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_okClickedHandler
-        String errors = getInputErrors();
-        if (errors.isEmpty()) {
-            Number einsatz = (Number) einsatzInput.getValue();
-            result = new Wettbuero.Wette(
-                    einsatz.doubleValue(),
-                    nameInput.getText(),
-                    snailList.getSelectedValue()
-            );
-            setVisible(false);
-            dispose();
-        } else {
-            JOptionPane.showMessageDialog(this, errors);
-        }
+        processReturn();
     }//GEN-LAST:event_okClickedHandler
+
+    private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            processReturn();
+        }
+    }//GEN-LAST:event_formKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
