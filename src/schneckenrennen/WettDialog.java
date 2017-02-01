@@ -118,13 +118,14 @@ public class WettDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Wette Abgeben");
-        addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                formKeyReleased(evt);
-            }
-        });
 
         nameLabel.setText("Name:");
+
+        nameInput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                nameInputKeyReleased(evt);
+            }
+        });
 
         einsatzLabel.setText("Einsatz:");
 
@@ -147,6 +148,11 @@ public class WettDialog extends javax.swing.JDialog {
         });
 
         einsatzInput.setValue(new Double(10.0));
+        einsatzInput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                einsatzInputKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout dialogMainPanelLayout = new javax.swing.GroupLayout(dialogMainPanel);
         dialogMainPanel.setLayout(dialogMainPanelLayout);
@@ -219,11 +225,17 @@ public class WettDialog extends javax.swing.JDialog {
         processReturn();
     }//GEN-LAST:event_okClickedHandler
 
-    private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
+    private void nameInputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_nameInputKeyReleased
         if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            processReturn();
-        }
-    }//GEN-LAST:event_formKeyReleased
+	    processReturn();
+	}
+    }//GEN-LAST:event_nameInputKeyReleased
+
+    private void einsatzInputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_einsatzInputKeyReleased
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+	    processReturn();
+	}
+    }//GEN-LAST:event_einsatzInputKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
