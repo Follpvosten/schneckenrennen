@@ -70,7 +70,7 @@ public class RaceFrame extends javax.swing.JFrame {
         };
         snailListView.setModel(new DefaultListModel<>());
         // Initialize the Wettbüro
-        wettbuero = new Wettbuero(1.5);
+        wettbuero = new Wettbuero(ConfigManager.getBetFactor());
         // Create new race
         setupRace();
     }

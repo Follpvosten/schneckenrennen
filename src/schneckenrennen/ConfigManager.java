@@ -21,12 +21,30 @@ import org.json.JSONObject;
  */
 public final class ConfigManager {
 
+    /**
+     * The default config file name. Cannot be changed at the moment.
+     */
     public static final String DEFAULT_CONFIG = "config.json";
+    
+    /**
+     * The key used for the double value of the WettBuero's factor.
+     */
+    public static final String BETFACTOR_KEY = "betfactor";
+    /**
+     * The key used for the JSON array of snail names.
+     */
     public static final String SNAILNAMES_KEY = "snailnames";
+    /**
+     * The key used for the JSON array of snail races.
+     */
     public static final String SNAILRACES_KEY = "snailraces";
+    /**
+     * The key used for the JSON array of race names.
+     */
     public static final String RACENAMES_KEY = "racenames";
 
     private static ArrayList<String> snailNames, snailRaces, raceNames;
+    private static double betFactor;
     
     /**
      * Exception to be thrown when there are less than 4 snail names
@@ -50,27 +68,30 @@ public final class ConfigManager {
 		Logger.getLogger(ConfigManager.class.getName())
 			.log(Level.SEVERE, "Someone deleted a file. Like, really, really fast.", ex);
 		System.out.println("Someone deleted a file. Like, really, really fast.");
-		applyDefaultLists();
+		applyDefaults();
 	    } catch (IOException ex) {
 		Logger.getLogger(ConfigManager.class.getName())
 			.log(Level.SEVERE, "Could not load file content for some reason.", ex);
 		System.out.println("Could not load file content for some reason.");
-		applyDefaultLists();
+		applyDefaults();
 	    } catch (NotEnoughNamesException ex) {
 		Logger.getLogger(ConfigManager.class.getName())
 			.log(Level.SEVERE, "Not enough snail names in the config file!", ex);
 		System.out.println("Not enough snail names in the config file!");
-		applyDefaultLists();
+		applyDefaults();
 	    }
 	} else {
-	    applyDefaultLists();
+	    Logger.getLogger(ConfigManager.class.getName())
+			.log(Level.INFO, "No config file found, generating a new one.");
+	    applyDefaults();
 	}
     }
 
     /**
      * Generates the default config values and saves them to the config file.
      */
-    private static void applyDefaultLists() {
+    private static void applyDefaults() {
+	betFactor = 1.5;
 	snailNames = new ArrayList<>(Arrays.asList(new String[]{
 	    "Winfried", "Bertha", "Hannibal", "Hüftgelenk",
 	    "Goliath", "Moses", "Petrus", "Nikolaus",
@@ -99,15 +120,16 @@ public final class ConfigManager {
 	    "Tänzerin", "Aromalady"
 	}));
 
-	saveLists();
+	saveConfig();
     }
 
     /**
      * Currently only used to save the default config.
      */
-    public static void saveLists() {
+    public static void saveConfig() {
 	try {
 	    JSONObject configJSON = new JSONObject();
+	    configJSON.put(BETFACTOR_KEY, betFactor);
 	    
 	    {
 		JSONArray currentArray = new JSONArray();
@@ -152,6 +174,7 @@ public final class ConfigManager {
     private static void loadConfigJSON(String jsonString) throws NotEnoughNamesException {
 	try {
 	    JSONObject json = new JSONObject(jsonString);
+	    betFactor = json.optDouble(BETFACTOR_KEY, 1.5);
 	    {
 		snailNames = new ArrayList<>();
 		JSONArray namesJsonArray = json.getJSONArray(SNAILNAMES_KEY);
@@ -199,4 +222,7 @@ public final class ConfigManager {
 	return raceNames.get(random.nextInt(raceNames.size()));
     }
 
+    public static double getBetFactor() {
+	return betFactor;
+    }
 }
