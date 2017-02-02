@@ -28,8 +28,10 @@ public class WettDialog extends javax.swing.JDialog {
         super(parent, true);
         initComponents();
         NumberFormat format = NumberFormat.getCurrencyInstance();
+	format.setMinimumFractionDigits(2);
+	format.setMaximumFractionDigits(2);
         NumberFormatter nf = new NumberFormatter(format);
-        nf.setMinimum(0.01);
+        nf.setMinimum(0.02);
         nf.setMaximum(2999999.99);
         nf.setAllowsInvalid(false);
         nf.setCommitsOnValidEdit(true);
