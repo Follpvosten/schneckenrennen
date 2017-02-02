@@ -11,14 +11,16 @@ import javax.swing.ListCellRenderer;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
-
+/**
+ * A dialog for selecting a snail and betting an amount of money on it.
+ * @author Follpvosten
+ */
 public class WettDialog extends javax.swing.JDialog {
 
     Wettbuero.Wette result;
 
     /**
-     * Creates a new WettDialog
-     *
+     * Creates a new WettDialog and displays the given array of snails.
      * @param parent The Form opening this dialog
      * @param schneggen The array of snails to display
      */
@@ -39,7 +41,10 @@ public class WettDialog extends javax.swing.JDialog {
         snailList.setModel(new DefaultListModel<>());
         snailList.setListData(schneggen);
     }
-
+    
+    /**
+     * The {@link ListCellRenderer} used to display a snail in the list.
+     */
     private class SnailBetCellRenderer extends JLabel implements ListCellRenderer<Rennschnecke> {
 
         @Override
@@ -61,11 +66,19 @@ public class WettDialog extends javax.swing.JDialog {
 
     }
 
+    /**
+     * Shows the Dialog and returns the bet to place when it is closed.
+     * @return A new Wette with the entered data.
+     */
     public Wettbuero.Wette showDialog() {
         setVisible(true);
         return result;
     }
 
+    /**
+     * Checks the enteres values for validity.
+     * @return "" if there are no errors; error messages otherwise.
+     */
     private String getInputErrors() {
         StringBuilder builder = new StringBuilder();
 
@@ -81,6 +94,11 @@ public class WettDialog extends javax.swing.JDialog {
         return builder.toString();
     }
     
+    /**
+     * Performs a check of the entered values. If they are valid, the Dialog
+     * is closed and the entered Wette is returned; otherwise, an informative
+     * error message will be displayed.
+     */
     private void processReturn() {
         String errors = getInputErrors();
         if (errors.isEmpty()) {
@@ -131,6 +149,11 @@ public class WettDialog extends javax.swing.JDialog {
 
         snailList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         snailList.setCellRenderer(new SnailBetCellRenderer());
+        snailList.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                snailListKeyReleased(evt);
+            }
+        });
         snailListScroll.setViewportView(snailList);
 
         cancelButton.setText("Abbrechen");
@@ -236,6 +259,12 @@ public class WettDialog extends javax.swing.JDialog {
 	    processReturn();
 	}
     }//GEN-LAST:event_einsatzInputKeyReleased
+
+    private void snailListKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_snailListKeyReleased
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+	    processReturn();
+	}
+    }//GEN-LAST:event_snailListKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;

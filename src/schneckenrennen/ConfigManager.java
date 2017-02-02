@@ -28,6 +28,9 @@ public final class ConfigManager {
 
     private static ArrayList<String> snailNames, snailRaces, raceNames;
     
+    /**
+     * Exception to be thrown when there are less than 4 snail names
+     */
     private static class NotEnoughNamesException extends Exception {}
 
     /**

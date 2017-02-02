@@ -129,6 +129,9 @@
                   <Connection code="new SnailBetCellRenderer()" type="code"/>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="snailListKeyReleased"/>
+              </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Rennschnecke&gt;"/>
               </AuxValues>

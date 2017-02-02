@@ -11,19 +11,52 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.ListCellRenderer;
 
-
+/**
+ * The currently used main window for this application.
+ * Visually shows the racing snails.
+ * @author Follpvosten
+ */
 public class RaceFrame extends javax.swing.JFrame {
 
+    /**
+     * Application-wide {@link java.util.Random} object used to generate all
+     * the random numbers used in this simulation.
+     */
     public static Random Random;
 
+    /**
+     * List of snail names, loaded by the {@link schneckenrennen.ConfigManager}
+     * and then copied to this class. It is copied because that makes it easier
+     * to not use a name twice.
+     */
     public static ArrayList<String> snailNames;
 
+    /**
+     * The list of progress bars used for displaying the progress the racing
+     * snails have made. Currently, the number of progress bars in this array
+     * determines how many snails are racing as well.
+     */
     private final JProgressBar[] progressBars;
+    
+    /**
+     * Thread used to update the racing progress separated from the UI Thread.
+     */
     private Thread snailUpdateThread;
 
+    /**
+     * The current race the snails are participating in.
+     */
     private Rennen currentRace;
+    /**
+     * The Wettbuero. Is planned to be made exchangable (and maybe also into a
+     * list) in a future version.
+     */
     private final Wettbuero wettbuero;
 
+    /**
+     * Entry point for the actual application. Loads config files, initializes
+     * the needed values and sets up the first race.
+     */
     public RaceFrame() {
 	ConfigManager.loadConfigFile();
 	snailNames = ConfigManager.getSnailNames();
@@ -42,6 +75,10 @@ public class RaceFrame extends javax.swing.JFrame {
         setupRace();
     }
 
+    /**
+     * Sets up a new snail race, generating a random goal between 100 and 400,
+     * selecting a random title and generating random snails.
+     */
     private void setupRace() {
         int newGoal = Random.nextInt(400) + 100;
         currentRace
@@ -60,6 +97,10 @@ public class RaceFrame extends javax.swing.JFrame {
         wettbuero.assignNewRennen(currentRace);
     }
 
+    /**
+     * Generates a given number of snails and adds them to the current race.
+     * @param number The number of snails to be generated.
+     */
     private void generateSnails(int number) {
         ArrayList<Integer> usedNameIndices = new ArrayList<>();
         for (int i = 0; i < number; i++) {
@@ -78,6 +119,10 @@ public class RaceFrame extends javax.swing.JFrame {
 
     }
 
+    /**
+     * Displays the snails in the snail list and visualizes their made progress
+     * using the progress bars.
+     */
     private void displaySnails() {
         Rennschnecke[] snails = currentRace.getSchneckenArray();
         snailListView.setListData(snails);
@@ -86,6 +131,9 @@ public class RaceFrame extends javax.swing.JFrame {
         }
     }
 
+    /**
+     * The {@link ListCellRenderer} used to display a snail in the list.
+     */
     private class SnailCellRenderer extends JLabel implements ListCellRenderer<Rennschnecke> {
 
         @Override
