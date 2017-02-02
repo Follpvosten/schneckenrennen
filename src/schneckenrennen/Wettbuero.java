@@ -126,4 +126,12 @@ public class Wettbuero {
 
         return builder.toString();
     }
+
+    /**
+     * Returns the factor the winner's bet is multiplied with.
+     * @return 
+     */
+    public double getFactor() {
+	return factor;
+    }
 }

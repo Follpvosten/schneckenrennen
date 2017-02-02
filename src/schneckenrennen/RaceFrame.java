@@ -197,9 +197,9 @@ public class RaceFrame extends javax.swing.JFrame {
         });
 
         betButton.setText("Wetten");
-        betButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                betClickedHandler(evt);
+        betButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                betButtonActionPerformed(evt);
             }
         });
 
@@ -290,12 +290,12 @@ public class RaceFrame extends javax.swing.JFrame {
     private void resetClickedHandler(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resetClickedHandler
         currentRace.stop();
         setupRace();
-        //generateSnails(3);
-        //displaySnails();
+	betButton.setEnabled(true);
     }//GEN-LAST:event_resetClickedHandler
 
     private void startClickedHandler(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startClickedHandler
-        if (!currentRace.isRunning() && !currentRace.hasEnded()) {
+        betButton.setEnabled(false);
+	if (!currentRace.isRunning() && !currentRace.hasEnded()) {
             currentRace.start();
             snailUpdateThread = new Thread() {
                 @Override
@@ -325,12 +325,17 @@ public class RaceFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_startClickedHandler
 
-    private void betClickedHandler(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_betClickedHandler
-        Wettbuero.Wette newWette = new WettDialog(this, currentRace.getSchneckenArray()).showDialog();
+    private void betButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_betButtonActionPerformed
+        Wettbuero.Wette newWette =
+		new WettDialog(
+			this,
+			currentRace.getSchneckenArray(),
+			wettbuero.getFactor()
+		).showDialog();
         if (newWette != null) {
             wettbuero.placeBet(newWette);
         }
-    }//GEN-LAST:event_betClickedHandler
+    }//GEN-LAST:event_betButtonActionPerformed
 
     /**
      * @param args the command line arguments

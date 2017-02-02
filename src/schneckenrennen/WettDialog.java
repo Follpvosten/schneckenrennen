@@ -1,9 +1,11 @@
 package schneckenrennen;
 
 import java.awt.Component;
+import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -15,7 +17,7 @@ import javax.swing.text.NumberFormatter;
  * A dialog for selecting a snail and betting an amount of money on it.
  * @author Follpvosten
  */
-public class WettDialog extends javax.swing.JDialog {
+public class WettDialog extends JDialog {
 
     Wettbuero.Wette result;
 
@@ -23,8 +25,9 @@ public class WettDialog extends javax.swing.JDialog {
      * Creates a new WettDialog and displays the given array of snails.
      * @param parent The Form opening this dialog
      * @param schneggen The array of snails to display
+     * @param wettbueroFactor The factor the Wettbuero uses.
      */
-    public WettDialog(java.awt.Frame parent, Rennschnecke[] schneggen) {
+    public WettDialog(Frame parent, Rennschnecke[] schneggen, double wettbueroFactor) {
         super(parent, true);
         initComponents();
         NumberFormat format = NumberFormat.getCurrencyInstance();
@@ -32,7 +35,8 @@ public class WettDialog extends javax.swing.JDialog {
 	format.setMaximumFractionDigits(2);
         NumberFormatter nf = new NumberFormatter(format);
         nf.setMinimum(0.02);
-        nf.setMaximum(2999999.99);
+	// The maximum bet value is, well, pretty high.
+        nf.setMaximum(Double.MAX_VALUE / wettbueroFactor);
         nf.setAllowsInvalid(false);
         nf.setCommitsOnValidEdit(true);
         nf.setOverwriteMode(false);
