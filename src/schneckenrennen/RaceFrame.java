@@ -2,25 +2,36 @@ package schneckenrennen;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Desktop;
+import java.awt.Font;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.ListCellRenderer;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 /**
- * The currently used main window for this application.
- * Visually shows the racing snails.
+ * The currently used main window for this application. Visually shows the
+ * racing snails.
+ *
  * @author Follpvosten
  */
 public class RaceFrame extends javax.swing.JFrame {
 
     /**
-     * Application-wide {@link java.util.Random} object used to generate all
-     * the random numbers used in this simulation.
+     * Application-wide {@link java.util.Random} object used to generate all the
+     * random numbers used in this simulation.
      */
     public static Random Random;
 
@@ -37,7 +48,7 @@ public class RaceFrame extends javax.swing.JFrame {
      * determines how many snails are racing as well.
      */
     private final JProgressBar[] progressBars;
-    
+
     /**
      * Thread used to update the racing progress separated from the UI Thread.
      */
@@ -59,8 +70,8 @@ public class RaceFrame extends javax.swing.JFrame {
      */
     public RaceFrame() {
         TranslationManager.loadTranslations();
-	ConfigManager.loadConfigFile();
-	snailNames = ConfigManager.getSnailNames();
+        ConfigManager.loadConfigFile();
+        snailNames = ConfigManager.getSnailNames();
         Random = new Random();
         initComponents();
         progressBars = new JProgressBar[]{
@@ -100,6 +111,7 @@ public class RaceFrame extends javax.swing.JFrame {
 
     /**
      * Generates a given number of snails and adds them to the current race.
+     *
      * @param number The number of snails to be generated.
      */
     private void generateSnails(int number) {
@@ -155,22 +167,23 @@ public class RaceFrame extends javax.swing.JFrame {
         }
 
     }
-    
+
     /**
-     * 
+     *
      */
     private void resetRace() {
-        if(currentRace.isRunning())
+        if (currentRace.isRunning()) {
             currentRace.stop();
+        }
         setupRace();
-	betButton.setEnabled(true);
+        betButton.setEnabled(true);
         betMenuItem.setEnabled(true);
     }
-    
+
     private void toggleRace() {
         betButton.setEnabled(false);
         betMenuItem.setEnabled(false);
-	if (!currentRace.isRunning() && !currentRace.hasEnded()) {
+        if (!currentRace.isRunning() && !currentRace.hasEnded()) {
             currentRace.start();
             snailUpdateThread = new Thread() {
                 @Override
@@ -199,14 +212,14 @@ public class RaceFrame extends javax.swing.JFrame {
             currentRace.stop();
         }
     }
-    
+
     private void popupBetDialog() {
-        Wettbuero.Wette newWette =
-		new WettDialog(
-			this,
-			currentRace.getSchneckenArray(),
-			wettbuero.getFactor()
-		).showDialog();
+        Wettbuero.Wette newWette
+                = new WettDialog(
+                        this,
+                        currentRace.getSchneckenArray(),
+                        wettbuero.getFactor()
+                ).showDialog();
         if (newWette != null) {
             wettbuero.placeBet(newWette);
         }
@@ -387,6 +400,11 @@ public class RaceFrame extends javax.swing.JFrame {
 
         aboutMenuItem.setText(bundle.getString("RaceFrame.aboutMenuItem.text")); // NOI18N
         aboutMenuItem.setName("aboutMenuItem"); // NOI18N
+        aboutMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutMenuItemActionPerformed(evt);
+            }
+        });
         helpMenu.add(aboutMenuItem);
 
         mainMenuBar.add(helpMenu);
@@ -441,6 +459,40 @@ public class RaceFrame extends javax.swing.JFrame {
         popupBetDialog();
     }//GEN-LAST:event_betMenuItemActionPerformed
 
+    private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
+        Font font = new JLabel().getFont();
+
+        // Load HTML and set style to match the application's style
+        String html
+                = TranslationManager.getTranslation(
+                        "RaceFrame.help.about",
+                        font.getFamily(),
+                        (font.isBold() ? "bold" : "normal"),
+                        "" + font.getSize() + "pt");
+
+        // Create HTML content pane
+        JEditorPane ep = new JEditorPane("text/html", html);
+
+        // Handle link clicks
+        ep.addHyperlinkListener(new HyperlinkListener() {
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                    try {
+                        Desktop.getDesktop().browse(e.getURL().toURI());
+                    } catch (IOException | URISyntaxException ex) {
+                        Logger.getLogger(RaceFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+        ep.setEditable(false);
+        ep.setBackground(new JOptionPane().getBackground());
+
+        // Show dialog
+        JOptionPane.showMessageDialog(null, ep);
+    }//GEN-LAST:event_aboutMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -456,7 +508,7 @@ public class RaceFrame extends javax.swing.JFrame {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
-                if(info.getName().contains("Windows")) {
+                if (info.getName().contains("Windows")) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
