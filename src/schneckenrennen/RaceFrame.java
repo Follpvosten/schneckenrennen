@@ -154,6 +154,62 @@ public class RaceFrame extends javax.swing.JFrame {
         }
 
     }
+    
+    /**
+     * 
+     */
+    private void resetRace() {
+        if(currentRace.isRunning())
+            currentRace.stop();
+        setupRace();
+	betButton.setEnabled(true);
+        betMenuItem.setEnabled(true);
+    }
+    
+    private void toggleRace() {
+        betButton.setEnabled(false);
+        betMenuItem.setEnabled(false);
+	if (!currentRace.isRunning() && !currentRace.hasEnded()) {
+            currentRace.start();
+            snailUpdateThread = new Thread() {
+                @Override
+                public void run() {
+                    while (currentRace.isRunning()) {
+                        currentRace.progress();
+                        displaySnails();
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException ex) {
+                            System.out.print("Interrupted: " + ex.getMessage());
+                        }
+                    }
+                    if (currentRace.hasEnded()) {
+                        java.awt.EventQueue.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                JOptionPane.showMessageDialog(RaceFrame.this, wettbuero.generateOutcome());
+                            }
+                        });
+                    }
+                }
+            };
+            snailUpdateThread.start();
+        } else {
+            currentRace.stop();
+        }
+    }
+    
+    private void popupBetDialog() {
+        Wettbuero.Wette newWette =
+		new WettDialog(
+			this,
+			currentRace.getSchneckenArray(),
+			wettbuero.getFactor()
+		).showDialog();
+        if (newWette != null) {
+            wettbuero.placeBet(newWette);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -175,6 +231,13 @@ public class RaceFrame extends javax.swing.JFrame {
         snail2Progress = new javax.swing.JProgressBar();
         snail3Progress = new javax.swing.JProgressBar();
         snail4Progress = new javax.swing.JProgressBar();
+        mainMenuBar = new javax.swing.JMenuBar();
+        raceMenu = new javax.swing.JMenu();
+        resetMenuItem = new javax.swing.JMenuItem();
+        startMenuItem = new javax.swing.JMenuItem();
+        betMenuItem = new javax.swing.JMenuItem();
+        helpMenu = new javax.swing.JMenu();
+        aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Schneckenrennen");
@@ -263,6 +326,44 @@ public class RaceFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        raceMenu.setText("Rennen");
+        raceMenu.setMargin(new java.awt.Insets(5, 0, 5, 0));
+
+        resetMenuItem.setText("Neu setzen");
+        resetMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetMenuItemActionPerformed(evt);
+            }
+        });
+        raceMenu.add(resetMenuItem);
+
+        startMenuItem.setText("Starten");
+        startMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startMenuItemActionPerformed(evt);
+            }
+        });
+        raceMenu.add(startMenuItem);
+
+        betMenuItem.setText("Wetten...");
+        betMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                betMenuItemActionPerformed(evt);
+            }
+        });
+        raceMenu.add(betMenuItem);
+
+        mainMenuBar.add(raceMenu);
+
+        helpMenu.setText("Hilfe");
+
+        aboutMenuItem.setText("Über...");
+        helpMenu.add(aboutMenuItem);
+
+        mainMenuBar.add(helpMenu);
+
+        setJMenuBar(mainMenuBar);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -288,54 +389,28 @@ public class RaceFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void resetClickedHandler(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resetClickedHandler
-        currentRace.stop();
-        setupRace();
-	betButton.setEnabled(true);
+        resetRace();
     }//GEN-LAST:event_resetClickedHandler
 
     private void startClickedHandler(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startClickedHandler
-        betButton.setEnabled(false);
-	if (!currentRace.isRunning() && !currentRace.hasEnded()) {
-            currentRace.start();
-            snailUpdateThread = new Thread() {
-                @Override
-                public void run() {
-                    while (currentRace.isRunning()) {
-                        currentRace.progress();
-                        displaySnails();
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException ex) {
-                            System.out.print("Interrupted: " + ex.getMessage());
-                        }
-                    }
-                    if (currentRace.hasEnded()) {
-                        java.awt.EventQueue.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                JOptionPane.showMessageDialog(RaceFrame.this, wettbuero.generateOutcome());
-                            }
-                        });
-                    }
-                }
-            };
-            snailUpdateThread.start();
-        } else {
-            currentRace.stop();
-        }
+        toggleRace();
     }//GEN-LAST:event_startClickedHandler
 
     private void betButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_betButtonActionPerformed
-        Wettbuero.Wette newWette =
-		new WettDialog(
-			this,
-			currentRace.getSchneckenArray(),
-			wettbuero.getFactor()
-		).showDialog();
-        if (newWette != null) {
-            wettbuero.placeBet(newWette);
-        }
+        popupBetDialog();
     }//GEN-LAST:event_betButtonActionPerformed
+
+    private void resetMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetMenuItemActionPerformed
+        resetRace();
+    }//GEN-LAST:event_resetMenuItemActionPerformed
+
+    private void startMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startMenuItemActionPerformed
+        toggleRace();
+    }//GEN-LAST:event_startMenuItemActionPerformed
+
+    private void betMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_betMenuItemActionPerformed
+        popupBetDialog();
+    }//GEN-LAST:event_betMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -381,8 +456,14 @@ public class RaceFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JButton betButton;
+    private javax.swing.JMenuItem betMenuItem;
+    private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenuBar mainMenuBar;
+    private javax.swing.JMenu raceMenu;
     private javax.swing.JButton resetButton;
+    private javax.swing.JMenuItem resetMenuItem;
     private javax.swing.JProgressBar snail1Progress;
     private javax.swing.JProgressBar snail2Progress;
     private javax.swing.JProgressBar snail3Progress;
@@ -392,5 +473,6 @@ public class RaceFrame extends javax.swing.JFrame {
     private javax.swing.JList<Rennschnecke> snailListView;
     private javax.swing.JPanel snailRacePanel;
     private javax.swing.JButton startButton;
+    private javax.swing.JMenuItem startMenuItem;
     // End of variables declaration//GEN-END:variables
 }
