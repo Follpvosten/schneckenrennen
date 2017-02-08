@@ -89,9 +89,9 @@ public class Rennschnecke {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Name: ").append(getName()).append("; ");
-        builder.append("Rasse: ").append(getRace()).append("; ");
-        builder.append("Fortschritt: ").append(getProgress());
+        builder.append(TranslationManager.getTranslation("Rennschnecke.name", getName())).append("; ");
+        builder.append(TranslationManager.getTranslation("Rennschnecke.race", getRace())).append("; ");
+        builder.append(TranslationManager.getTranslation("Rennschnecke.progress", getProgress()));
         return builder.toString();
     }
     
@@ -101,8 +101,8 @@ public class Rennschnecke {
      */
     public String toBetString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("Name: ").append(getName()).append("; ");
-        builder.append("Rasse: ").append(getRace());
+        builder.append(TranslationManager.getTranslation("Rennschnecke.name", getName())).append("; ");
+        builder.append(TranslationManager.getTranslation("Rennschnecke.race", getRace()));
         return builder.toString();
     }
 }

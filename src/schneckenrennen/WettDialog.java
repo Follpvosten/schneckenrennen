@@ -90,11 +90,12 @@ public class WettDialog extends JDialog {
 
         String enteredName = nameInput.getText();
         if (enteredName.trim().isEmpty()) {
-            builder.append("Bitte einen gültigen Namen eingeben!\n");
+            builder.append(TranslationManager.getTranslation("WettDialog.error.nameEmpty"));
+            builder.append('\n');
         }
         
         if(snailList.getSelectedValue() == null) {
-            builder.append("Bitte eine Schnecke auswählen!");
+            builder.append(TranslationManager.getTranslation("WettDialog.error.noSnailSelected"));
         }
 
         return builder.toString();
@@ -141,7 +142,7 @@ public class WettDialog extends JDialog {
         einsatzInput = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("schneckenrennen/Bundle"); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("schneckenrennen/AutoBundle"); // NOI18N
         setTitle(bundle.getString("WettDialog.title")); // NOI18N
         setName("Form"); // NOI18N
 
@@ -203,7 +204,7 @@ public class WettDialog extends JDialog {
             .addGroup(dialogMainPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(dialogMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(snailListScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE)
+                    .addComponent(snailListScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
                     .addGroup(dialogMainPanelLayout.createSequentialGroup()
                         .addGroup(dialogMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(nameLabel)
@@ -230,7 +231,7 @@ public class WettDialog extends JDialog {
                     .addComponent(einsatzLabel)
                     .addComponent(einsatzInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(snailListScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
+                .addComponent(snailListScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 124, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(dialogMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)

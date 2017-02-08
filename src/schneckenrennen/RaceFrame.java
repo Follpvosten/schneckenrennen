@@ -58,6 +58,7 @@ public class RaceFrame extends javax.swing.JFrame {
      * the needed values and sets up the first race.
      */
     public RaceFrame() {
+        TranslationManager.loadTranslations();
 	ConfigManager.loadConfigFile();
 	snailNames = ConfigManager.getSnailNames();
         Random = new Random();
@@ -86,7 +87,7 @@ public class RaceFrame extends javax.swing.JFrame {
                         ConfigManager.getRandomRaceName(Random),
                         newGoal
                 );
-        this.setTitle(currentRace.getName() + " (Rennen bis " + newGoal + ")");
+        this.setTitle(TranslationManager.getTranslation("info.raceInfo", currentRace.getName(), newGoal));
         for (int i = 0; i < progressBars.length; i++) {
             progressBars[i].setMaximum(newGoal);
         }
@@ -240,7 +241,7 @@ public class RaceFrame extends javax.swing.JFrame {
         aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("schneckenrennen/Bundle"); // NOI18N
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("schneckenrennen/AutoBundle"); // NOI18N
         setTitle(bundle.getString("RaceFrame.title")); // NOI18N
         setName("Form"); // NOI18N
 
