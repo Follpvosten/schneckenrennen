@@ -141,20 +141,30 @@ public class WettDialog extends JDialog {
         einsatzInput = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Wette Abgeben");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("schneckenrennen/Bundle"); // NOI18N
+        setTitle(bundle.getString("WettDialog.title")); // NOI18N
+        setName("Form"); // NOI18N
 
-        nameLabel.setText("Name:");
+        dialogMainPanel.setName("dialogMainPanel"); // NOI18N
 
+        nameLabel.setText(bundle.getString("WettDialog.nameLabel.text")); // NOI18N
+        nameLabel.setName("nameLabel"); // NOI18N
+
+        nameInput.setName("nameInput"); // NOI18N
         nameInput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 nameInputKeyReleased(evt);
             }
         });
 
-        einsatzLabel.setText("Einsatz:");
+        einsatzLabel.setText(bundle.getString("WettDialog.einsatzLabel.text")); // NOI18N
+        einsatzLabel.setName("einsatzLabel"); // NOI18N
+
+        snailListScroll.setName("snailListScroll"); // NOI18N
 
         snailList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         snailList.setCellRenderer(new SnailBetCellRenderer());
+        snailList.setName("snailList"); // NOI18N
         snailList.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 snailListKeyReleased(evt);
@@ -162,20 +172,23 @@ public class WettDialog extends JDialog {
         });
         snailListScroll.setViewportView(snailList);
 
-        cancelButton.setText("Abbrechen");
+        cancelButton.setText(bundle.getString("WettDialog.cancelButton.text")); // NOI18N
+        cancelButton.setName("cancelButton"); // NOI18N
         cancelButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 cancelClickedHandler(evt);
             }
         });
 
-        confirmButton.setText("OK");
+        confirmButton.setText(bundle.getString("WettDialog.confirmButton.text")); // NOI18N
+        confirmButton.setName("confirmButton"); // NOI18N
         confirmButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 okClickedHandler(evt);
             }
         });
 
+        einsatzInput.setName("einsatzInput"); // NOI18N
         einsatzInput.setValue(new Double(10.0));
         einsatzInput.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -201,7 +214,7 @@ public class WettDialog extends JDialog {
                             .addComponent(nameInput)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dialogMainPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(cancelButton)
+                        .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(confirmButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())

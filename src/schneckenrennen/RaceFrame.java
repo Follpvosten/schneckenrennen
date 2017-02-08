@@ -240,26 +240,36 @@ public class RaceFrame extends javax.swing.JFrame {
         aboutMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Schneckenrennen");
+        java.util.ResourceBundle bundle = java.util.ResourceBundle.getBundle("schneckenrennen/Bundle"); // NOI18N
+        setTitle(bundle.getString("RaceFrame.title")); // NOI18N
+        setName("Form"); // NOI18N
+
+        snailInfoPanel.setName("snailInfoPanel"); // NOI18N
+
+        snailInfoScroll.setName("snailInfoScroll"); // NOI18N
 
         snailListView.setCellRenderer(new SnailCellRenderer());
+        snailListView.setName("snailListView"); // NOI18N
         snailInfoScroll.setViewportView(snailListView);
 
-        resetButton.setText("Neu setzen");
+        resetButton.setText(bundle.getString("RaceFrame.resetButton.text")); // NOI18N
+        resetButton.setName("resetButton"); // NOI18N
         resetButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 resetClickedHandler(evt);
             }
         });
 
-        startButton.setText("Starten");
+        startButton.setText(bundle.getString("RaceFrame.startButton.text")); // NOI18N
+        startButton.setName("startButton"); // NOI18N
         startButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 startClickedHandler(evt);
             }
         });
 
-        betButton.setText("Wetten");
+        betButton.setText(bundle.getString("RaceFrame.betButton.text")); // NOI18N
+        betButton.setName("betButton"); // NOI18N
         betButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 betButtonActionPerformed(evt);
@@ -272,15 +282,15 @@ public class RaceFrame extends javax.swing.JFrame {
             snailInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(snailInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(snailInfoScroll)
+                .addComponent(snailInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(snailInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(resetButton)
                     .addGroup(snailInfoPanelLayout.createSequentialGroup()
                         .addGap(12, 12, 12)
                         .addGroup(snailInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(betButton)
-                            .addComponent(startButton))))
+                            .addComponent(startButton)
+                            .addComponent(betButton))))
                 .addContainerGap())
         );
         snailInfoPanelLayout.setVerticalGroup(
@@ -298,6 +308,16 @@ public class RaceFrame extends javax.swing.JFrame {
                     .addComponent(snailInfoScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        snailRacePanel.setName("snailRacePanel"); // NOI18N
+
+        snail1Progress.setName("snail1Progress"); // NOI18N
+
+        snail2Progress.setName("snail2Progress"); // NOI18N
+
+        snail3Progress.setName("snail3Progress"); // NOI18N
+
+        snail4Progress.setName("snail4Progress"); // NOI18N
 
         javax.swing.GroupLayout snailRacePanelLayout = new javax.swing.GroupLayout(snailRacePanel);
         snailRacePanel.setLayout(snailRacePanelLayout);
@@ -326,10 +346,14 @@ public class RaceFrame extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        raceMenu.setText("Rennen");
-        raceMenu.setMargin(new java.awt.Insets(5, 0, 5, 0));
+        mainMenuBar.setName("mainMenuBar"); // NOI18N
 
-        resetMenuItem.setText("Neu setzen");
+        raceMenu.setText(bundle.getString("RaceFrame.raceMenu.text")); // NOI18N
+        raceMenu.setMargin(new java.awt.Insets(5, 0, 5, 0));
+        raceMenu.setName("raceMenu"); // NOI18N
+
+        resetMenuItem.setText(bundle.getString("RaceFrame.resetMenuItem.text")); // NOI18N
+        resetMenuItem.setName("resetMenuItem"); // NOI18N
         resetMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resetMenuItemActionPerformed(evt);
@@ -337,7 +361,8 @@ public class RaceFrame extends javax.swing.JFrame {
         });
         raceMenu.add(resetMenuItem);
 
-        startMenuItem.setText("Starten");
+        startMenuItem.setText(bundle.getString("RaceFrame.startMenuItem.text")); // NOI18N
+        startMenuItem.setName("startMenuItem"); // NOI18N
         startMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 startMenuItemActionPerformed(evt);
@@ -345,7 +370,8 @@ public class RaceFrame extends javax.swing.JFrame {
         });
         raceMenu.add(startMenuItem);
 
-        betMenuItem.setText("Wetten...");
+        betMenuItem.setText(bundle.getString("RaceFrame.betMenuItem.text")); // NOI18N
+        betMenuItem.setName("betMenuItem"); // NOI18N
         betMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 betMenuItemActionPerformed(evt);
@@ -355,9 +381,11 @@ public class RaceFrame extends javax.swing.JFrame {
 
         mainMenuBar.add(raceMenu);
 
-        helpMenu.setText("Hilfe");
+        helpMenu.setText(bundle.getString("RaceFrame.helpMenu.text")); // NOI18N
+        helpMenu.setName("helpMenu"); // NOI18N
 
-        aboutMenuItem.setText("Über...");
+        aboutMenuItem.setText(bundle.getString("RaceFrame.aboutMenuItem.text")); // NOI18N
+        aboutMenuItem.setName("aboutMenuItem"); // NOI18N
         helpMenu.add(aboutMenuItem);
 
         mainMenuBar.add(helpMenu);
