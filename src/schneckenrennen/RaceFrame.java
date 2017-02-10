@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Font;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -70,7 +71,7 @@ public class RaceFrame extends javax.swing.JFrame {
      */
     public RaceFrame() {
         TranslationManager.loadTranslations();
-        ConfigManager.loadConfigFile();
+        ConfigManager.loadDefaultConfigFile();
         snailNames = ConfigManager.getSnailNames();
         Random = new Random();
         initComponents();
@@ -246,6 +247,10 @@ public class RaceFrame extends javax.swing.JFrame {
         snail3Progress = new javax.swing.JProgressBar();
         snail4Progress = new javax.swing.JProgressBar();
         mainMenuBar = new javax.swing.JMenuBar();
+        fileMenu = new javax.swing.JMenu();
+        loadConfigMenuItem = new javax.swing.JMenuItem();
+        exportMenu = new javax.swing.JMenu();
+        quitMenuItem = new javax.swing.JMenuItem();
         raceMenu = new javax.swing.JMenu();
         resetMenuItem = new javax.swing.JMenuItem();
         startMenuItem = new javax.swing.JMenuItem();
@@ -361,6 +366,29 @@ public class RaceFrame extends javax.swing.JFrame {
         );
 
         mainMenuBar.setName("mainMenuBar"); // NOI18N
+
+        fileMenu.setText(bundle.getString("RaceFrame.fileMenu.text")); // NOI18N
+        fileMenu.setName("fileMenu"); // NOI18N
+
+        loadConfigMenuItem.setText(bundle.getString("RaceFrame.loadConfigMenuItem.text")); // NOI18N
+        loadConfigMenuItem.setName("loadConfigMenuItem"); // NOI18N
+        fileMenu.add(loadConfigMenuItem);
+
+        exportMenu.setText(bundle.getString("RaceFrame.exportMenu.text")); // NOI18N
+        exportMenu.setEnabled(false);
+        exportMenu.setName("exportMenu"); // NOI18N
+        fileMenu.add(exportMenu);
+
+        quitMenuItem.setText(bundle.getString("RaceFrame.quitMenuItem.text")); // NOI18N
+        quitMenuItem.setName("quitMenuItem"); // NOI18N
+        quitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                quitMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(quitMenuItem);
+
+        mainMenuBar.add(fileMenu);
 
         raceMenu.setText(bundle.getString("RaceFrame.raceMenu.text")); // NOI18N
         raceMenu.setMargin(new java.awt.Insets(5, 0, 5, 0));
@@ -493,6 +521,10 @@ public class RaceFrame extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(null, ep);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
+    private void quitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitMenuItemActionPerformed
+        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+    }//GEN-LAST:event_quitMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -540,8 +572,12 @@ public class RaceFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JButton betButton;
     private javax.swing.JMenuItem betMenuItem;
+    private javax.swing.JMenu exportMenu;
+    private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenuItem loadConfigMenuItem;
     private javax.swing.JMenuBar mainMenuBar;
+    private javax.swing.JMenuItem quitMenuItem;
     private javax.swing.JMenu raceMenu;
     private javax.swing.JButton resetButton;
     private javax.swing.JMenuItem resetMenuItem;
