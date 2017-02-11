@@ -12,7 +12,7 @@ time and feel like it. Nothing's guaranteed, tho.
 
 ## Compiling and running the project
 
-First, clone then project. Then, do
+First, clone the project. Then, do
 
     git submodule init
     git submodule update
