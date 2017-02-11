@@ -5,8 +5,8 @@ import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -14,13 +14,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JEditorPane;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * The currently used main window for this application. Visually shows the
@@ -35,13 +36,6 @@ public class RaceFrame extends javax.swing.JFrame {
      * random numbers used in this simulation.
      */
     public static Random Random;
-
-    /**
-     * List of snail names, loaded by the {@link schneckenrennen.ConfigManager}
-     * and then copied to this class. It is copied because that makes it easier
-     * to not use a name twice.
-     */
-    public static ArrayList<String> snailNames;
 
     /**
      * The list of progress bars used for displaying the progress the racing
@@ -72,7 +66,6 @@ public class RaceFrame extends javax.swing.JFrame {
     public RaceFrame() {
         TranslationManager.loadTranslations();
         ConfigManager.loadDefaultConfigFile();
-        snailNames = ConfigManager.getSnailNames();
         Random = new Random();
         initComponents();
         progressBars = new JProgressBar[]{
@@ -100,9 +93,9 @@ public class RaceFrame extends javax.swing.JFrame {
                         newGoal
                 );
         this.setTitle(TranslationManager.getTranslation("info.raceInfo", currentRace.getName(), newGoal));
-        for (int i = 0; i < progressBars.length; i++) {
-            progressBars[i].setMaximum(newGoal);
-        }
+	for (JProgressBar progressBar : progressBars) {
+	    progressBar.setMaximum(newGoal);
+	}
 
         generateSnails(progressBars.length);
         displaySnails();
@@ -120,13 +113,13 @@ public class RaceFrame extends javax.swing.JFrame {
         for (int i = 0; i < number; i++) {
             int nameIndex;
             do {
-                nameIndex = Random.nextInt(snailNames.size());
+                nameIndex = Random.nextInt(ConfigManager.getSnailNames().size());
             } while (usedNameIndices.contains(nameIndex));
             usedNameIndices.add(nameIndex);
             currentRace.addRennschnecke(
                     new Rennschnecke(
                             Random.nextInt(3) + 2,
-                            snailNames.get(nameIndex),
+                            ConfigManager.getSnailNames().get(nameIndex),
                             ConfigManager.getRandomSnailRace(Random)
                     ));
         }
@@ -199,12 +192,9 @@ public class RaceFrame extends javax.swing.JFrame {
                         }
                     }
                     if (currentRace.hasEnded()) {
-                        java.awt.EventQueue.invokeLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                JOptionPane.showMessageDialog(RaceFrame.this, wettbuero.generateOutcome());
-                            }
-                        });
+                        java.awt.EventQueue.invokeLater(() -> {
+			    JOptionPane.showMessageDialog(RaceFrame.this, wettbuero.generateOutcome());
+			});
                     }
                 }
             };
@@ -372,6 +362,11 @@ public class RaceFrame extends javax.swing.JFrame {
 
         loadConfigMenuItem.setText(bundle.getString("RaceFrame.loadConfigMenuItem.text")); // NOI18N
         loadConfigMenuItem.setName("loadConfigMenuItem"); // NOI18N
+        loadConfigMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadConfigMenuItemActionPerformed(evt);
+            }
+        });
         fileMenu.add(loadConfigMenuItem);
 
         exportMenu.setText(bundle.getString("RaceFrame.exportMenu.text")); // NOI18N
@@ -502,18 +497,15 @@ public class RaceFrame extends javax.swing.JFrame {
         JEditorPane ep = new JEditorPane("text/html", html);
 
         // Handle link clicks
-        ep.addHyperlinkListener(new HyperlinkListener() {
-            @Override
-            public void hyperlinkUpdate(HyperlinkEvent e) {
-                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-                    try {
-                        Desktop.getDesktop().browse(e.getURL().toURI());
-                    } catch (IOException | URISyntaxException ex) {
-                        Logger.getLogger(RaceFrame.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        });
+        ep.addHyperlinkListener((HyperlinkEvent e) -> {
+	    if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+		try {
+		    Desktop.getDesktop().browse(e.getURL().toURI());
+		} catch (IOException | URISyntaxException ex) {
+		    Logger.getLogger(RaceFrame.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	    }
+	});
         ep.setEditable(false);
         ep.setBackground(new JOptionPane().getBackground());
 
@@ -525,11 +517,36 @@ public class RaceFrame extends javax.swing.JFrame {
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_quitMenuItemActionPerformed
 
+    private void loadConfigMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadConfigMenuItemActionPerformed
+        final JFileChooser fc = new JFileChooser(".");
+	fc.setMultiSelectionEnabled(false);
+	fc.setFileFilter(new FileFilter() {
+	    @Override
+	    public boolean accept(File f) {
+		return f.getName().endsWith(".json");
+	    }
+
+	    @Override
+	    public String getDescription() {
+		return TranslationManager.getTranslation("Config.configFileType");
+	    }
+	    
+	});
+	
+	int result = fc.showOpenDialog(this);
+	if(result == JFileChooser.APPROVE_OPTION) {
+	    String loadResult = ConfigManager.loadSpecificConfigFile(fc.getSelectedFile().getAbsolutePath());
+	    if(!loadResult.isEmpty())
+		JOptionPane.showMessageDialog(this, loadResult);
+	    resetRace();
+	}
+    }//GEN-LAST:event_loadConfigMenuItemActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
+        /* Set the look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
@@ -549,23 +566,17 @@ public class RaceFrame extends javax.swing.JFrame {
             int i = new Random().nextInt(infos.length);
             UIManager.setLookAndFeel(infos[i].getClassName());
             System.out.println(infos[i].getName());*/
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RaceFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RaceFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RaceFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(RaceFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+	//</editor-fold>
+	
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new RaceFrame().setVisible(true);
-            }
-        });
+        java.awt.EventQueue.invokeLater(() -> {
+	    new RaceFrame().setVisible(true);
+	});
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -28,14 +28,28 @@ public final class TranslationManager {
     
     private static ResourceBundle translationBundle = null;
     
+    /**
+     * Loads the Translations from the default ResourceBundle "CustomsBundle"
+     */
     public static void loadTranslations() {
         translationBundle = ResourceBundle.getBundle("schneckenrennen/CustomsBundle");
     }
     
+    /**
+     * Returns a translation from the loaded Bundle.
+     * @param key The key of the translation entry
+     * @return The translated String
+     */
     public static String getTranslation(String key) {
         return translationBundle.getString(key);
     }
     
+    /**
+     * Returns a formatted translation from the translations file.
+     * @param key The key of the translation entry
+     * @param args The formatting arguments
+     * @return The translated, formatted String
+     */
     public static String getTranslation(String key, Object... args) {
         return String.format(translationBundle.getString(key), args);
     }

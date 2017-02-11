@@ -22,6 +22,9 @@
                 </Property>
                 <Property name="name" type="java.lang.String" value="loadConfigMenuItem" noResource="true"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadConfigMenuItemActionPerformed"/>
+              </Events>
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="exportMenu">
               <Properties>

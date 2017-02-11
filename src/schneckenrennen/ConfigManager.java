@@ -54,7 +54,9 @@ public final class ConfigManager {
     private static class NotEnoughNamesException extends Exception {}
 
     /**
-     * Loads values from the default config file.
+     * Loads values from the default config file. In case of an error, the
+     * default config values will be generated saved to the default config file,
+     * if it doesn't already exist.
      */
     public static void loadDefaultConfigFile() {
 	try {
@@ -83,29 +85,30 @@ public final class ConfigManager {
      * @param filename The path of the config file to get settings from.
      * @return An empty String if everything went well, errors otherwise
      */
-    public static String loadSpecificConfig(String filename) {
-	StringBuilder result = new StringBuilder();
+    public static String loadSpecificConfigFile(String filename) {
+	String result = "";
 	try {
 	    loadConfigFile(filename);
 	} catch (FileNotFoundException ex) {
 	    String message = TranslationManager.getTranslation("Config.error.selectedFileNotFound");
 	    Logger.getLogger(ConfigManager.class.getName())
 		    .log(Level.INFO, message, ex);
-	    result.append(message).append('\n');
+	    result = message;
 	} catch (IOException ex) {
 	    String message = TranslationManager.getTranslation("Config.error.ioError");
 	    Logger.getLogger(ConfigManager.class.getName()).log(Level.SEVERE, message, ex);
-	    result.append(message).append('\n');
+	    result = message;
 	} catch(JSONException ex) {
 	    String message = TranslationManager.getTranslation("Config.error.jsonInvalid");
 	    Logger.getLogger(ConfigManager.class.getName()).log(Level.SEVERE, message, ex);
-	    result.append(message).append('\n');
+	    result = message;
+	    loadDefaultConfigFile();
 	} catch (NotEnoughNamesException ex) {
 	    String message = TranslationManager.getTranslation("Config.error.notEnoughNames");
 	    Logger.getLogger(ConfigManager.class.getName()).log(Level.SEVERE, message, ex);
-	    result.append(message);
+	    result = message;
 	}
-	return result.toString();
+	return result;
     }
 
     /**
@@ -120,7 +123,6 @@ public final class ConfigManager {
 	    throws FileNotFoundException, IOException,
 		   JSONException, NotEnoughNamesException {
 	File file = new File(filename);
-
 	FileInputStream fis = new FileInputStream(file);
 	byte[] data = new byte[(int) file.length()];
 	fis.read(data);
@@ -246,22 +248,36 @@ public final class ConfigManager {
 	}
     }
 
+    /**
+     * Returns the currently loaded snail names.
+     * @return 
+     */
     public static ArrayList<String> getSnailNames() {
 	return snailNames;
     }
 
-    public static String getRandomSnailName(Random random) {
-	return snailNames.get(random.nextInt(snailNames.size()));
-    }
-
+    /**
+     * Returns a random race from the currently loaded list of snail races
+     * @param random The {@link Random} object to be used.
+     * @return 
+     */
     public static String getRandomSnailRace(Random random) {
 	return snailRaces.get(random.nextInt(snailRaces.size()));
     }
 
+    /**
+     * Returns a random name from the currently loaded list of race names
+     * @param random The {@link Random} object to be used.
+     * @return 
+     */
     public static String getRandomRaceName(Random random) {
 	return raceNames.get(random.nextInt(raceNames.size()));
     }
 
+    /**
+     * Returns the currently loaded bet factor for the Wettbuero.
+     * @return 
+     */
     public static double getBetFactor() {
 	return betFactor;
     }
