@@ -98,13 +98,14 @@ public class Wettbuero {
             return null;
         }
         StringBuilder builder = new StringBuilder();
-        Rennschnecke[] schneggen = rennen.getSchneckenArray();
-        for (int i = 0; i < schneggen.length; i++) {
-            int place = schneggen[i].isWinner() ? 1 : i+1;
-            builder.append(place).append(".: ").append(schneggen[i].toString());
-            if (schneggen[i].isWinner()) {
+	ArrayList<Rennschnecke> schneggen = rennen.getSchnecken();
+        //Rennschnecke[] schneggen = rennen.getSchneckenArray();
+        for (int i = 0; i < schneggen.size(); i++) {
+            int place = schneggen.get(i).isWinner() ? 1 : i+1;
+            builder.append(place).append(".: ").append(schneggen.get(i).toString());
+            if (schneggen.get(i).isWinner()) {
                 for (Wette wette : wetten) {
-                    if (wette.schnecke == schneggen[i]) {
+                    if (wette.schnecke == schneggen.get(i)) {
                         builder.append(" (").append(wette.spielerName).append(" gewinnt ");
                         builder.append(String.format("%.2f", wette.einsatz * factor)).append("€)");
                     }

@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -27,7 +28,7 @@ public class WettDialog extends JDialog {
      * @param schneggen The array of snails to display
      * @param wettbueroFactor The factor the Wettbuero uses.
      */
-    public WettDialog(Frame parent, Rennschnecke[] schneggen, double wettbueroFactor) {
+    public WettDialog(Frame parent, ArrayList<Rennschnecke> schneggen, double wettbueroFactor) {
         super(parent, true);
         initComponents();
         NumberFormat format = NumberFormat.getCurrencyInstance();
@@ -45,7 +46,7 @@ public class WettDialog extends JDialog {
         );
         result = null;
         snailList.setModel(new DefaultListModel<>());
-        snailList.setListData(schneggen);
+        snailList.setListData(schneggen.toArray(new Rennschnecke[schneggen.size()]));
     }
     
     /**

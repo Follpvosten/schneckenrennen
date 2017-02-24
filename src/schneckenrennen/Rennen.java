@@ -124,14 +124,13 @@ public class Rennen {
 	    }
 	}
     }
-
+    
     /**
-     * Returns the list of participating snails as an array.
-     *
-     * @return
+     * Returns the list of participating 
+     * @return 
      */
-    public Rennschnecke[] getSchneckenArray() {
-	return snails.toArray(new Rennschnecke[snails.size()]);
+    public ArrayList<Rennschnecke> getSchnecken() {
+	return snails;
     }
 
     /**

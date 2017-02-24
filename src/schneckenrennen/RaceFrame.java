@@ -1,7 +1,5 @@
 package schneckenrennen;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.WindowEvent;
@@ -12,16 +10,14 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.DefaultListModel;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
-import javax.swing.ListCellRenderer;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.AbstractTableModel;
 
 /**
  * The currently used main window for this application. Visually shows the
@@ -48,6 +44,10 @@ public class RaceFrame extends javax.swing.JFrame {
      * Thread used to update the racing progress separated from the UI Thread.
      */
     private Thread snailUpdateThread;
+    /**
+     * Table model used to display the currently participating snails.
+     */
+    private SnailTableModel tableModel;
 
     /**
      * The current race the snails are participating in.
@@ -64,21 +64,20 @@ public class RaceFrame extends javax.swing.JFrame {
      * the needed values and sets up the first race.
      */
     public RaceFrame() {
-        TranslationManager.loadTranslations();
-        ConfigManager.loadDefaultConfigFile();
-        Random = new Random();
-        initComponents();
-        progressBars = new JProgressBar[]{
-            snail1Progress,
-            snail2Progress,
-            snail3Progress,
-            snail4Progress
-        };
-        snailListView.setModel(new DefaultListModel<>());
-        // Initialize the Wettbüro
-        wettbuero = new Wettbuero(ConfigManager.getBetFactor());
-        // Create new race
-        setupRace();
+	TranslationManager.loadTranslations();
+	ConfigManager.loadDefaultConfigFile();
+	Random = new Random();
+	initComponents();
+	progressBars = new JProgressBar[]{
+	    snail1Progress,
+	    snail2Progress,
+	    snail3Progress,
+	    snail4Progress
+	};
+	// Initialize the Wettbüro
+	wettbuero = new Wettbuero(ConfigManager.getBetFactor());
+	// Create new race
+	setupRace();
     }
 
     /**
@@ -86,21 +85,21 @@ public class RaceFrame extends javax.swing.JFrame {
      * selecting a random title and generating random snails.
      */
     private void setupRace() {
-        int newGoal = Random.nextInt(400) + 100;
-        currentRace
-                = new Rennen(
-                        ConfigManager.getRandomRaceName(Random),
-                        newGoal
-                );
-        this.setTitle(TranslationManager.getTranslation("info.raceInfo", currentRace.getName(), newGoal));
+	int newGoal = Random.nextInt(400) + 100;
+	currentRace
+		= new Rennen(
+			ConfigManager.getRandomRaceName(Random),
+			newGoal
+		);
+	this.setTitle(TranslationManager.getTranslation("info.raceInfo", currentRace.getName(), newGoal));
 	for (JProgressBar progressBar : progressBars) {
 	    progressBar.setMaximum(newGoal);
 	}
 
-        generateSnails(progressBars.length);
-        displaySnails();
+	generateSnails(progressBars.length);
+	displaySnails();
 
-        wettbuero.assignNewRennen(currentRace);
+	wettbuero.assignNewRennen(currentRace);
     }
 
     /**
@@ -109,21 +108,25 @@ public class RaceFrame extends javax.swing.JFrame {
      * @param number The number of snails to be generated.
      */
     private void generateSnails(int number) {
-        ArrayList<Integer> usedNameIndices = new ArrayList<>();
-        for (int i = 0; i < number; i++) {
-            int nameIndex;
-            do {
-                nameIndex = Random.nextInt(ConfigManager.getSnailNames().size());
-            } while (usedNameIndices.contains(nameIndex));
-            usedNameIndices.add(nameIndex);
-            currentRace.addRennschnecke(
-                    new Rennschnecke(
-                            Random.nextInt(3) + 2,
-                            ConfigManager.getSnailNames().get(nameIndex),
-                            ConfigManager.getRandomSnailRace(Random)
-                    ));
-        }
-
+	ArrayList<Integer> usedNameIndices = new ArrayList<>();
+	for (int i = 0; i < number; i++) {
+	    int nameIndex;
+	    do {
+		nameIndex = Random.nextInt(ConfigManager.getSnailNames().size());
+	    } while (usedNameIndices.contains(nameIndex));
+	    usedNameIndices.add(nameIndex);
+	    currentRace.addRennschnecke(
+		    new Rennschnecke(
+			    Random.nextInt(3) + 2,
+			    ConfigManager.getSnailNames().get(nameIndex),
+			    ConfigManager.getRandomSnailRace(Random)
+		    ));
+	}
+	tableModel = new SnailTableModel(
+		currentRace.getSchnecken(),
+		TranslationManager.getTranslation("RaceFrame.snailTable.columnNames").split(";")
+	);
+	snailTable.setModel(tableModel);
     }
 
     /**
@@ -131,89 +134,167 @@ public class RaceFrame extends javax.swing.JFrame {
      * using the progress bars.
      */
     private void displaySnails() {
-        Rennschnecke[] snails = currentRace.getSchneckenArray();
-        snailListView.setListData(snails);
-        for (int i = 0; i < snails.length; i++) {
-            progressBars[i].setValue(snails[i].getProgress());
-        }
+	ArrayList<Rennschnecke> snails = currentRace.getSchnecken();
+	tableModel.refresh();
+	for (int i = 0; i < snails.size(); i++) {
+	    progressBars[i].setValue(snails.get(i).getProgress());
+	}
     }
 
     /**
-     * The {@link ListCellRenderer} used to display a snail in the list.
+     * The model used to display the currently participating snails in the
+     * table meant for this purpose.
      */
-    private class SnailCellRenderer extends JLabel implements ListCellRenderer<Rennschnecke> {
+    private class SnailTableModel extends AbstractTableModel {
 
-        @Override
-        public Component getListCellRendererComponent(JList<? extends Rennschnecke> jlist, Rennschnecke e, int i, boolean bln, boolean bln1) {
-            setText(e.toString());
+	/**
+	 * The snails to display.
+	 */
+	private final ArrayList<Rennschnecke> data;
+	/**
+	 * The names of the columns (to be translated soon).
+	 */
+	private final String[] columnNames;
+	/**
+	 * Tells the table content to change when the race is over.
+	 */
+	private boolean endState = false;
 
-            if (e.isWinner()) {
-                this.setBackground(Color.GREEN);
-                this.setForeground(Color.BLACK);
-            } else {
-                this.setBackground(jlist.getBackground());
-                this.setForeground(jlist.getForeground());
-            }
-            setEnabled(jlist.isEnabled());
-            setFont(jlist.getFont());
-            setOpaque(true);
-            return this;
-        }
+	public SnailTableModel(ArrayList<Rennschnecke> data, String[] columnNames) {
+	    this.data = data;
+	    this.columnNames = columnNames;
+	}
 
+	@Override
+	public int getRowCount() {
+	    return data.size();
+	}
+
+	@Override
+	public int getColumnCount() {
+	    // Display only 3 columns until the race has ended
+	    return endState ? 4 : 3;
+	}
+
+	@Override
+	public String getColumnName(int col) {
+	    // Ignore column number 0 when there are only 3 to display
+	    return endState ? columnNames[col] : columnNames[col + 1];
+	}
+
+	@Override
+	public Object getValueAt(int rowIndex, int columnIndex) {
+	    // I can't think of a better way yet
+	    if (endState) {
+		switch (columnIndex) {
+		    case 0:
+			return "" + (rowIndex + 1) + ".";
+		    case 1:
+			return data.get(rowIndex).getName();
+		    case 2:
+			return data.get(rowIndex).getRace();
+		    case 3:
+			return data.get(rowIndex).getProgress();
+		    default:
+			return null;
+		}
+	    } else {
+		switch (columnIndex) {
+		    case 0:
+			return data.get(rowIndex).getName();
+		    case 1:
+			return data.get(rowIndex).getRace();
+		    case 2:
+			return data.get(rowIndex).getProgress();
+		    default:
+			return null;
+		}
+	    }
+	}
+
+	/**
+	 * Refreshes only the progress the snails have made.
+	 */
+	public void refresh() {
+	    for (int i = 0; i < data.size(); i++) {
+		fireTableCellUpdated(i, 2);
+	    }
+	}
+
+	/**
+	 * Displays the final result properly
+	 */
+	public void end() {
+	    endState = true;
+	    this.fireTableStructureChanged();
+	    snailTable.getColumnModel().getColumn(0).setMaxWidth(50);
+	    snailTable.getColumnModel().getColumn(3).setMinWidth(90);
+	    snailTable.getColumnModel().getColumn(3).setMaxWidth(120);
+	    snailTable.sizeColumnsToFit(1);
+	    //snailTable.sizeColumnsToFit(0);
+	    snailTable.changeSelection(0, 0, false, false);
+	}
     }
 
     /**
-     *
+     * Stops the running race (if any) and sets up a new one.
      */
     private void resetRace() {
-        if (currentRace.isRunning()) {
-            currentRace.stop();
-        }
-        setupRace();
-        betButton.setEnabled(true);
-        betMenuItem.setEnabled(true);
+	if (currentRace.isRunning()) {
+	    currentRace.stop();
+	}
+	setupRace();
+	betButton.setEnabled(true);
+	betMenuItem.setEnabled(true);
     }
 
+    /**
+     * Starts, pauses or continues the current race based on its current state.
+     */
     private void toggleRace() {
-        betButton.setEnabled(false);
-        betMenuItem.setEnabled(false);
-        if (!currentRace.isRunning() && !currentRace.hasEnded()) {
-            currentRace.start();
-            snailUpdateThread = new Thread() {
-                @Override
-                public void run() {
-                    while (currentRace.isRunning()) {
-                        currentRace.progress();
-                        displaySnails();
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException ex) {
-                            System.out.print("Interrupted: " + ex.getMessage());
-                        }
-                    }
-                    if (currentRace.hasEnded()) {
-                        java.awt.EventQueue.invokeLater(() -> {
+	betButton.setEnabled(false);
+	betMenuItem.setEnabled(false);
+	if (!currentRace.isRunning() && !currentRace.hasEnded()) {
+	    currentRace.start();
+	    snailUpdateThread = new Thread() {
+		@Override
+		public void run() {
+		    while (currentRace.isRunning()) {
+			currentRace.progress();
+			displaySnails();
+			try {
+			    Thread.sleep(50);
+			} catch (InterruptedException ex) {
+			    System.out.print("Interrupted: " + ex.getMessage());
+			}
+		    }
+		    if (currentRace.hasEnded()) {
+			java.awt.EventQueue.invokeLater(() -> {
+			    tableModel.end();
 			    JOptionPane.showMessageDialog(RaceFrame.this, wettbuero.generateOutcome());
 			});
-                    }
-                }
-            };
-            snailUpdateThread.start();
-        } else {
-            currentRace.stop();
-        }
+		    }
+		}
+	    };
+	    snailUpdateThread.start();
+	} else {
+	    currentRace.stop();
+	}
     }
 
+    /**
+     * Opens a dialog allowing the user(s) to place a bet.
+     */
     private void popupBetDialog() {
-        Wettbuero.Wette newWette
-                = new WettDialog(
-                        this,
-                        currentRace.getSchneckenArray(),
-                        wettbuero.getFactor()
-                ).showDialog();
-        if (newWette != null) {
-            wettbuero.placeBet(newWette);
-        }
+	Wettbuero.Wette newWette
+		= new WettDialog(
+			this,
+			currentRace.getSchnecken(),
+			wettbuero.getFactor()
+		).showDialog();
+	if (newWette != null) {
+	    wettbuero.placeBet(newWette);
+	}
     }
 
     /**
@@ -226,11 +307,11 @@ public class RaceFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         snailInfoPanel = new javax.swing.JPanel();
-        snailInfoScroll = new javax.swing.JScrollPane();
-        snailListView = new javax.swing.JList<>();
         resetButton = new javax.swing.JButton();
         startButton = new javax.swing.JButton();
         betButton = new javax.swing.JButton();
+        snailTableScroll = new javax.swing.JScrollPane();
+        snailTable = new javax.swing.JTable();
         snailRacePanel = new javax.swing.JPanel();
         snail1Progress = new javax.swing.JProgressBar();
         snail2Progress = new javax.swing.JProgressBar();
@@ -254,12 +335,6 @@ public class RaceFrame extends javax.swing.JFrame {
         setName("Form"); // NOI18N
 
         snailInfoPanel.setName("snailInfoPanel"); // NOI18N
-
-        snailInfoScroll.setName("snailInfoScroll"); // NOI18N
-
-        snailListView.setCellRenderer(new SnailCellRenderer());
-        snailListView.setName("snailListView"); // NOI18N
-        snailInfoScroll.setViewportView(snailListView);
 
         resetButton.setText(bundle.getString("RaceFrame.resetButton.text")); // NOI18N
         resetButton.setName("resetButton"); // NOI18N
@@ -285,14 +360,32 @@ public class RaceFrame extends javax.swing.JFrame {
             }
         });
 
+        snailTableScroll.setName("snailTableScroll"); // NOI18N
+
+        snailTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        snailTable.setEnabled(false);
+        snailTable.setFocusable(false);
+        snailTable.setName("snailTable"); // NOI18N
+        snailTableScroll.setViewportView(snailTable);
+
         javax.swing.GroupLayout snailInfoPanelLayout = new javax.swing.GroupLayout(snailInfoPanel);
         snailInfoPanel.setLayout(snailInfoPanelLayout);
         snailInfoPanelLayout.setHorizontalGroup(
             snailInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(snailInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(snailInfoScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(snailTableScroll)
+                .addGap(18, 18, 18)
                 .addGroup(snailInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(resetButton)
                     .addGroup(snailInfoPanelLayout.createSequentialGroup()
@@ -307,14 +400,14 @@ public class RaceFrame extends javax.swing.JFrame {
             .addGroup(snailInfoPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(snailInfoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(snailTableScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(snailInfoPanelLayout.createSequentialGroup()
                         .addComponent(resetButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(startButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(betButton)
-                        .addGap(0, 6, Short.MAX_VALUE))
-                    .addComponent(snailInfoScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -459,45 +552,45 @@ public class RaceFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void resetClickedHandler(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_resetClickedHandler
-        resetRace();
+	resetRace();
     }//GEN-LAST:event_resetClickedHandler
 
     private void startClickedHandler(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_startClickedHandler
-        toggleRace();
+	toggleRace();
     }//GEN-LAST:event_startClickedHandler
 
     private void betButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_betButtonActionPerformed
-        popupBetDialog();
+	popupBetDialog();
     }//GEN-LAST:event_betButtonActionPerformed
 
     private void resetMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetMenuItemActionPerformed
-        resetRace();
+	resetRace();
     }//GEN-LAST:event_resetMenuItemActionPerformed
 
     private void startMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startMenuItemActionPerformed
-        toggleRace();
+	toggleRace();
     }//GEN-LAST:event_startMenuItemActionPerformed
 
     private void betMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_betMenuItemActionPerformed
-        popupBetDialog();
+	popupBetDialog();
     }//GEN-LAST:event_betMenuItemActionPerformed
 
     private void aboutMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutMenuItemActionPerformed
-        Font font = new JLabel().getFont();
+	Font font = new JLabel().getFont();
 
-        // Load HTML and set style to match the application's style
-        String html
-                = TranslationManager.getTranslation(
-                        "RaceFrame.help.about",
-                        font.getFamily(),
-                        (font.isBold() ? "bold" : "normal"),
-                        "" + font.getSize() + "pt");
+	// Load HTML and set style to match the application's style
+	String html
+		= TranslationManager.getTranslation(
+			"RaceFrame.help.about",
+			font.getFamily(),
+			(font.isBold() ? "bold" : "normal"),
+			"" + font.getSize() + "pt");
 
-        // Create HTML content pane
-        JEditorPane ep = new JEditorPane("text/html", html);
+	// Create HTML content pane
+	JEditorPane ep = new JEditorPane("text/html", html);
 
-        // Handle link clicks
-        ep.addHyperlinkListener((HyperlinkEvent e) -> {
+	// Handle link clicks
+	ep.addHyperlinkListener((HyperlinkEvent e) -> {
 	    if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
 		try {
 		    Desktop.getDesktop().browse(e.getURL().toURI());
@@ -506,19 +599,19 @@ public class RaceFrame extends javax.swing.JFrame {
 		}
 	    }
 	});
-        ep.setEditable(false);
-        ep.setBackground(new JOptionPane().getBackground());
+	ep.setEditable(false);
+	ep.setBackground(new JOptionPane().getBackground());
 
-        // Show dialog
-        JOptionPane.showMessageDialog(null, ep);
+	// Show dialog
+	JOptionPane.showMessageDialog(null, ep);
     }//GEN-LAST:event_aboutMenuItemActionPerformed
 
     private void quitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quitMenuItemActionPerformed
-        dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+	dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_quitMenuItemActionPerformed
 
     private void loadConfigMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadConfigMenuItemActionPerformed
-        final JFileChooser fc = new JFileChooser(".");
+	final JFileChooser fc = new JFileChooser(".");
 	fc.setMultiSelectionEnabled(false);
 	fc.setFileFilter(new FileFilter() {
 	    @Override
@@ -530,14 +623,15 @@ public class RaceFrame extends javax.swing.JFrame {
 	    public String getDescription() {
 		return TranslationManager.getTranslation("Config.configFileType");
 	    }
-	    
+
 	});
-	
+
 	int result = fc.showOpenDialog(this);
-	if(result == JFileChooser.APPROVE_OPTION) {
+	if (result == JFileChooser.APPROVE_OPTION) {
 	    String loadResult = ConfigManager.loadSpecificConfigFile(fc.getSelectedFile().getAbsolutePath());
-	    if(!loadResult.isEmpty())
+	    if (!loadResult.isEmpty()) {
 		JOptionPane.showMessageDialog(this, loadResult);
+	    }
 	    resetRace();
 	}
     }//GEN-LAST:event_loadConfigMenuItemActionPerformed
@@ -546,35 +640,35 @@ public class RaceFrame extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+	/* Set the look and feel */
+	//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+	/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("GTK+".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-                if (info.getName().contains("Windows")) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-            /*LookAndFeelInfo[] infos = UIManager.getInstalledLookAndFeels();
+	 */
+	try {
+	    for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+		if ("GTK+".equals(info.getName())) {
+		    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+		    break;
+		}
+		if (info.getName().contains("Windows")) {
+		    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+		    break;
+		}
+	    }
+	    /*LookAndFeelInfo[] infos = UIManager.getInstalledLookAndFeels();
             int i = new Random().nextInt(infos.length);
             UIManager.setLookAndFeel(infos[i].getClassName());
             System.out.println(infos[i].getName());*/
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RaceFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
+	} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+	    java.util.logging.Logger.getLogger(RaceFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+	}
 	//</editor-fold>
-	
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
+	//</editor-fold>
+
+	/* Create and display the form */
+	java.awt.EventQueue.invokeLater(() -> {
 	    new RaceFrame().setVisible(true);
 	});
     }
@@ -597,9 +691,9 @@ public class RaceFrame extends javax.swing.JFrame {
     private javax.swing.JProgressBar snail3Progress;
     private javax.swing.JProgressBar snail4Progress;
     private javax.swing.JPanel snailInfoPanel;
-    private javax.swing.JScrollPane snailInfoScroll;
-    private javax.swing.JList<Rennschnecke> snailListView;
     private javax.swing.JPanel snailRacePanel;
+    private javax.swing.JTable snailTable;
+    private javax.swing.JScrollPane snailTableScroll;
     private javax.swing.JButton startButton;
     private javax.swing.JMenuItem startMenuItem;
     // End of variables declaration//GEN-END:variables
