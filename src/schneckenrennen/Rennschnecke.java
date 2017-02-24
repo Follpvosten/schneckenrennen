@@ -1,5 +1,7 @@
 package schneckenrennen;
 
+import org.json.JSONObject;
+
 /**
  * A simple data class representing a racing snail.
  * @author Follpvosten
@@ -89,9 +91,9 @@ public class Rennschnecke {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(Translations.getTranslation("Rennschnecke.name", getName())).append("; ");
-        builder.append(Translations.getTranslation("Rennschnecke.race", getRace())).append("; ");
-        builder.append(Translations.getTranslation("Rennschnecke.progress", getProgress()));
+        builder.append(Translations.get("Rennschnecke.name", getName())).append("; ");
+        builder.append(Translations.get("Rennschnecke.race", getRace())).append("; ");
+        builder.append(Translations.get("Rennschnecke.progress", getProgress()));
         return builder.toString();
     }
     
@@ -101,9 +103,40 @@ public class Rennschnecke {
      */
     public String toBetString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(Translations.getTranslation("Rennschnecke.name", getName())).append("; ");
-        builder.append(Translations.getTranslation("Rennschnecke.race", getRace()));
+        builder.append(Translations.get("Rennschnecke.name", getName())).append("; ");
+        builder.append(Translations.get("Rennschnecke.race", getRace()));
         return builder.toString();
+    }
+    
+    /**
+     * Loads a snail from the given JSON object
+     * @param json The snail serialized to JSON
+     * @return The deserialized snail as Rennschnecke
+     */
+    public static Rennschnecke fromJSON(JSONObject json) {
+	Rennschnecke result =
+		new Rennschnecke(
+			json.getInt("maxSpeed"),
+			json.getString("name"),
+			json.getString("race")
+		);
+	result.progress = json.getInt("progress");
+	result.hasWon = json.getBoolean("hasWon");
+	return result;
+    }
+    
+    /**
+     * Serializes the snail to a JSON object.
+     * @return A JSON object containing the data of the snail.
+     */
+    public JSONObject toJSON() {
+	JSONObject result = new JSONObject();
+	result.put("maxSpeed", maxSpeed);
+	result.put("name", name);
+	result.put("race", race);
+	result.put("progress", progress);
+	result.put("hasWon", hasWon);
+	return result;
     }
     
     public boolean strengen(String bettor) {

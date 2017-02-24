@@ -63,19 +63,19 @@ public final class Configs {
 	    loadConfigFile(DEFAULT_CONFIG);
 	} catch (FileNotFoundException ex) {
 	    Logger.getLogger(Configs.class.getName())
-		    .log(Level.INFO, Translations.getTranslation("Config.error.fileNotFound"), ex);
+		    .log(Level.INFO, Translations.get("Config.error.fileNotFound"), ex);
 	    applyDefaults();
 	} catch (IOException ex) {
 	    Logger.getLogger(Configs.class.getName())
-		    .log(Level.SEVERE, Translations.getTranslation("Config.error.ioError"), ex);
+		    .log(Level.SEVERE, Translations.get("Config.error.ioError"), ex);
 	    applyDefaults();
 	} catch (JSONException ex) {
 	    Logger.getLogger(Configs.class.getName())
-		    .log(Level.SEVERE, Translations.getTranslation("Config.error.jsonInvalid"), ex);
+		    .log(Level.SEVERE, Translations.get("Config.error.jsonInvalid"), ex);
 	    applyDefaults();
 	} catch (NotEnoughNamesException ex) {
 	    Logger.getLogger(Configs.class.getName())
-		    .log(Level.SEVERE, Translations.getTranslation("Config.error.notEnoughNames"), ex);
+		    .log(Level.SEVERE, Translations.get("Config.error.notEnoughNames"), ex);
 	    applyDefaults();
 	}
     }
@@ -90,21 +90,21 @@ public final class Configs {
 	try {
 	    loadConfigFile(filename);
 	} catch (FileNotFoundException ex) {
-	    String message = Translations.getTranslation("Config.error.selectedFileNotFound");
+	    String message = Translations.get("Config.error.selectedFileNotFound");
 	    Logger.getLogger(Configs.class.getName())
 		    .log(Level.INFO, message, ex);
 	    result = message;
 	} catch (IOException ex) {
-	    String message = Translations.getTranslation("Config.error.ioError");
+	    String message = Translations.get("Config.error.ioError");
 	    Logger.getLogger(Configs.class.getName()).log(Level.SEVERE, message, ex);
 	    result = message;
 	} catch(JSONException ex) {
-	    String message = Translations.getTranslation("Config.error.jsonInvalid");
+	    String message = Translations.get("Config.error.jsonInvalid");
 	    Logger.getLogger(Configs.class.getName()).log(Level.SEVERE, message, ex);
 	    result = message;
 	    loadDefaultConfigFile();
 	} catch (NotEnoughNamesException ex) {
-	    String message = Translations.getTranslation("Config.error.notEnoughNames");
+	    String message = Translations.get("Config.error.notEnoughNames");
 	    Logger.getLogger(Configs.class.getName()).log(Level.SEVERE, message, ex);
 	    result = message;
 	}
@@ -117,7 +117,7 @@ public final class Configs {
      * @param filename The name of the file to be loaded
      * @throws java.io.FileNotFoundException When the file does not exist
      * @throws java.io.IOException When the file can't be read for some reason
-     * @throws schneckenrennen.ConfigManager.NotEnoughNamesException
+     * @throws NotEnoughNamesException
      */
     public static void loadConfigFile(String filename)
 	    throws FileNotFoundException, IOException,

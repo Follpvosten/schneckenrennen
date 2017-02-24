@@ -38,7 +38,7 @@ public final class Translations {
      * @param key The key of the translation entry
      * @return The translated String
      */
-    public static String getTranslation(String key) {
+    public static String get(String key) {
         return translationBundle.getString(key);
     }
     
@@ -48,7 +48,7 @@ public final class Translations {
      * @param args The formatting arguments
      * @return The translated, formatted String
      */
-    public static String getTranslation(String key, Object... args) {
+    public static String get(String key, Object... args) {
         return String.format(translationBundle.getString(key), args);
     }
 }

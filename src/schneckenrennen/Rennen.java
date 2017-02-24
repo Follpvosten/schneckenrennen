@@ -1,6 +1,8 @@
 package schneckenrennen;
 
 import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * A class representing a snail race. It holds a list of the snails that are
@@ -158,5 +160,37 @@ public class Rennen {
      */
     public int getGoal() {
 	return goalDistance;
+    }
+    
+    /**
+     * Deserializes the given JSON object, including the participating snails,
+     * to a {@link Rennen} object.
+     * @param json The JSON object to be deserialized
+     * @return The Rennen that was deserialized
+     */
+    public static Rennen fromJSON(JSONObject json) {
+	Rennen result = new Rennen(json.getString("name"), json.getInt("goal"));
+	result.raceEnded = json.getBoolean("ended");
+	JSONArray snailsJSON = json.getJSONArray("snails");
+	for (int i = 0; i < snailsJSON.length(); i++) {
+	    result.addRennschnecke(Rennschnecke.fromJSON(snailsJSON.getJSONObject(i)));
+	}
+	return result;
+    }
+    
+    /**
+     * Serializes the Rennen into a JSON object.
+     * @return The JSON object serialized form the Rennen
+     */
+    public JSONObject toJSON() {
+	JSONObject result = new JSONObject();
+	result.put("name", name);
+	result.put("goal", goalDistance);
+	result.put("ended", raceEnded);
+	JSONArray snailsJSONArray = new JSONArray();
+	for(Rennschnecke snail : snails) {
+	    snailsJSONArray.put(snail.toJSON());
+	}
+	return result;
     }
 }

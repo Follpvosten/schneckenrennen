@@ -91,12 +91,12 @@ public class WettDialog extends JDialog {
 
         String enteredName = nameInput.getText();
         if (enteredName.trim().isEmpty()) {
-            builder.append(Translations.getTranslation("WettDialog.error.nameEmpty"));
+            builder.append(Translations.get("WettDialog.error.nameEmpty"));
             builder.append('\n');
         }
         
         if(snailList.getSelectedValue() == null) {
-            builder.append(Translations.getTranslation("WettDialog.error.noSnailSelected"));
+            builder.append(Translations.get("WettDialog.error.noSnailSelected"));
         }
 
         return builder.toString();

@@ -91,7 +91,7 @@ public class RaceFrame extends javax.swing.JFrame {
 			Configs.getRandomRaceName(Random),
 			newGoal
 		);
-	this.setTitle(Translations.getTranslation("info.raceInfo", currentRace.getName(), newGoal));
+	this.setTitle(Translations.get("info.raceInfo", currentRace.getName(), newGoal));
 	for (JProgressBar progressBar : progressBars) {
 	    progressBar.setMaximum(newGoal);
 	}
@@ -124,7 +124,7 @@ public class RaceFrame extends javax.swing.JFrame {
 	}
 	tableModel = new SnailTableModel(
 		currentRace.getSchnecken(),
-		Translations.getTranslation("RaceFrame.snailTable.columnNames").split(";")
+		Translations.get("RaceFrame.snailTable.columnNames").split(";")
 	);
 	snailTable.setModel(tableModel);
     }
@@ -320,7 +320,8 @@ public class RaceFrame extends javax.swing.JFrame {
         mainMenuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         loadConfigMenuItem = new javax.swing.JMenuItem();
-        exportMenu = new javax.swing.JMenu();
+        saveRaceMenuItem = new javax.swing.JMenuItem();
+        loadRaceMenuItem = new javax.swing.JMenuItem();
         quitMenuItem = new javax.swing.JMenuItem();
         raceMenu = new javax.swing.JMenu();
         resetMenuItem = new javax.swing.JMenuItem();
@@ -364,13 +365,10 @@ public class RaceFrame extends javax.swing.JFrame {
 
         snailTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
         snailTable.setEnabled(false);
@@ -407,7 +405,7 @@ public class RaceFrame extends javax.swing.JFrame {
                         .addComponent(startButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(betButton)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 12, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -462,10 +460,20 @@ public class RaceFrame extends javax.swing.JFrame {
         });
         fileMenu.add(loadConfigMenuItem);
 
-        exportMenu.setText(bundle.getString("RaceFrame.exportMenu.text")); // NOI18N
-        exportMenu.setEnabled(false);
-        exportMenu.setName("exportMenu"); // NOI18N
-        fileMenu.add(exportMenu);
+        saveRaceMenuItem.setText(bundle.getString("RaceFrame.saveRaceMenuItem.text")); // NOI18N
+        saveRaceMenuItem.setEnabled(false);
+        saveRaceMenuItem.setName("saveRaceMenuItem"); // NOI18N
+        saveRaceMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveRaceMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(saveRaceMenuItem);
+
+        loadRaceMenuItem.setText(bundle.getString("RaceFrame.loadRaceMenuItem.text")); // NOI18N
+        loadRaceMenuItem.setEnabled(false);
+        loadRaceMenuItem.setName("loadRaceMenuItem"); // NOI18N
+        fileMenu.add(loadRaceMenuItem);
 
         quitMenuItem.setText(bundle.getString("RaceFrame.quitMenuItem.text")); // NOI18N
         quitMenuItem.setName("quitMenuItem"); // NOI18N
@@ -541,7 +549,6 @@ public class RaceFrame extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addComponent(snailInfoPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(snailRacePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -580,7 +587,7 @@ public class RaceFrame extends javax.swing.JFrame {
 
 	// Load HTML and set style to match the application's style
 	String html
-		= Translations.getTranslation(
+		= Translations.get(
 			"RaceFrame.help.about",
 			font.getFamily(),
 			(font.isBold() ? "bold" : "normal"),
@@ -621,7 +628,7 @@ public class RaceFrame extends javax.swing.JFrame {
 
 	    @Override
 	    public String getDescription() {
-		return Translations.getTranslation("Config.configFileType");
+		return Translations.get("Config.configFileType");
 	    }
 
 	});
@@ -635,6 +642,10 @@ public class RaceFrame extends javax.swing.JFrame {
 	    resetRace();
 	}
     }//GEN-LAST:event_loadConfigMenuItemActionPerformed
+
+    private void saveRaceMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveRaceMenuItemActionPerformed
+        
+    }//GEN-LAST:event_saveRaceMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -677,15 +688,16 @@ public class RaceFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem aboutMenuItem;
     private javax.swing.JButton betButton;
     private javax.swing.JMenuItem betMenuItem;
-    private javax.swing.JMenu exportMenu;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem loadConfigMenuItem;
+    private javax.swing.JMenuItem loadRaceMenuItem;
     private javax.swing.JMenuBar mainMenuBar;
     private javax.swing.JMenuItem quitMenuItem;
     private javax.swing.JMenu raceMenu;
     private javax.swing.JButton resetButton;
     private javax.swing.JMenuItem resetMenuItem;
+    private javax.swing.JMenuItem saveRaceMenuItem;
     private javax.swing.JProgressBar snail1Progress;
     private javax.swing.JProgressBar snail2Progress;
     private javax.swing.JProgressBar snail3Progress;
