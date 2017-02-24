@@ -91,12 +91,12 @@ public class WettDialog extends JDialog {
 
         String enteredName = nameInput.getText();
         if (enteredName.trim().isEmpty()) {
-            builder.append(TranslationManager.getTranslation("WettDialog.error.nameEmpty"));
+            builder.append(Translations.getTranslation("WettDialog.error.nameEmpty"));
             builder.append('\n');
         }
         
         if(snailList.getSelectedValue() == null) {
-            builder.append(TranslationManager.getTranslation("WettDialog.error.noSnailSelected"));
+            builder.append(Translations.getTranslation("WettDialog.error.noSnailSelected"));
         }
 
         return builder.toString();
@@ -116,6 +116,11 @@ public class WettDialog extends JDialog {
                     nameInput.getText(),
                     snailList.getSelectedValue()
             );
+	    if(snailList.getSelectedValue().getName().equals("Blümchen")) {
+		if(snailList.getSelectedValue().strengen(nameInput.getText())) {
+		    JOptionPane.showMessageDialog(this, "Blümchen wird sich ganz doll strengen!");
+		}
+	    }
             setVisible(false);
             dispose();
         } else {

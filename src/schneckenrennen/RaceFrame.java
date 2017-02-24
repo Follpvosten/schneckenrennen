@@ -64,8 +64,8 @@ public class RaceFrame extends javax.swing.JFrame {
      * the needed values and sets up the first race.
      */
     public RaceFrame() {
-	TranslationManager.loadTranslations();
-	ConfigManager.loadDefaultConfigFile();
+	Translations.loadTranslations();
+	Configs.loadDefaultConfigFile();
 	Random = new Random();
 	initComponents();
 	progressBars = new JProgressBar[]{
@@ -75,7 +75,7 @@ public class RaceFrame extends javax.swing.JFrame {
 	    snail4Progress
 	};
 	// Initialize the Wettbüro
-	wettbuero = new Wettbuero(ConfigManager.getBetFactor());
+	wettbuero = new Wettbuero(Configs.getBetFactor());
 	// Create new race
 	setupRace();
     }
@@ -88,10 +88,10 @@ public class RaceFrame extends javax.swing.JFrame {
 	int newGoal = Random.nextInt(400) + 100;
 	currentRace
 		= new Rennen(
-			ConfigManager.getRandomRaceName(Random),
+			Configs.getRandomRaceName(Random),
 			newGoal
 		);
-	this.setTitle(TranslationManager.getTranslation("info.raceInfo", currentRace.getName(), newGoal));
+	this.setTitle(Translations.getTranslation("info.raceInfo", currentRace.getName(), newGoal));
 	for (JProgressBar progressBar : progressBars) {
 	    progressBar.setMaximum(newGoal);
 	}
@@ -112,19 +112,19 @@ public class RaceFrame extends javax.swing.JFrame {
 	for (int i = 0; i < number; i++) {
 	    int nameIndex;
 	    do {
-		nameIndex = Random.nextInt(ConfigManager.getSnailNames().size());
+		nameIndex = Random.nextInt(Configs.getSnailNames().size());
 	    } while (usedNameIndices.contains(nameIndex));
 	    usedNameIndices.add(nameIndex);
 	    currentRace.addRennschnecke(
 		    new Rennschnecke(
 			    Random.nextInt(3) + 2,
-			    ConfigManager.getSnailNames().get(nameIndex),
-			    ConfigManager.getRandomSnailRace(Random)
+			    Configs.getSnailNames().get(nameIndex),
+			    Configs.getRandomSnailRace(Random)
 		    ));
 	}
 	tableModel = new SnailTableModel(
 		currentRace.getSchnecken(),
-		TranslationManager.getTranslation("RaceFrame.snailTable.columnNames").split(";")
+		Translations.getTranslation("RaceFrame.snailTable.columnNames").split(";")
 	);
 	snailTable.setModel(tableModel);
     }
@@ -580,7 +580,7 @@ public class RaceFrame extends javax.swing.JFrame {
 
 	// Load HTML and set style to match the application's style
 	String html
-		= TranslationManager.getTranslation(
+		= Translations.getTranslation(
 			"RaceFrame.help.about",
 			font.getFamily(),
 			(font.isBold() ? "bold" : "normal"),
@@ -621,14 +621,14 @@ public class RaceFrame extends javax.swing.JFrame {
 
 	    @Override
 	    public String getDescription() {
-		return TranslationManager.getTranslation("Config.configFileType");
+		return Translations.getTranslation("Config.configFileType");
 	    }
 
 	});
 
 	int result = fc.showOpenDialog(this);
 	if (result == JFileChooser.APPROVE_OPTION) {
-	    String loadResult = ConfigManager.loadSpecificConfigFile(fc.getSelectedFile().getAbsolutePath());
+	    String loadResult = Configs.loadSpecificConfigFile(fc.getSelectedFile().getAbsolutePath());
 	    if (!loadResult.isEmpty()) {
 		JOptionPane.showMessageDialog(this, loadResult);
 	    }

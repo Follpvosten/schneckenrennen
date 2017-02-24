@@ -20,11 +20,9 @@ import java.util.ResourceBundle;
 
 /**
  * A class used to load and deliver localized Strings.
- * It does basically absolutely nothing right now, except for being there.
- * Kinda like me. Huh.
  * @author Follpvosten
  */
-public final class TranslationManager {
+public final class Translations {
     
     private static ResourceBundle translationBundle = null;
     

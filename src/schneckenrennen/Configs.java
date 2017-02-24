@@ -20,7 +20,7 @@ import org.json.JSONObject;
  *
  * @author Follpvosten
  */
-public final class ConfigManager {
+public final class Configs {
 
     /**
      * The default config file path.
@@ -62,20 +62,20 @@ public final class ConfigManager {
 	try {
 	    loadConfigFile(DEFAULT_CONFIG);
 	} catch (FileNotFoundException ex) {
-	    Logger.getLogger(ConfigManager.class.getName())
-		    .log(Level.INFO, TranslationManager.getTranslation("Config.error.fileNotFound"), ex);
+	    Logger.getLogger(Configs.class.getName())
+		    .log(Level.INFO, Translations.getTranslation("Config.error.fileNotFound"), ex);
 	    applyDefaults();
 	} catch (IOException ex) {
-	    Logger.getLogger(ConfigManager.class.getName())
-		    .log(Level.SEVERE, TranslationManager.getTranslation("Config.error.ioError"), ex);
+	    Logger.getLogger(Configs.class.getName())
+		    .log(Level.SEVERE, Translations.getTranslation("Config.error.ioError"), ex);
 	    applyDefaults();
 	} catch (JSONException ex) {
-	    Logger.getLogger(ConfigManager.class.getName())
-		    .log(Level.SEVERE, TranslationManager.getTranslation("Config.error.jsonInvalid"), ex);
+	    Logger.getLogger(Configs.class.getName())
+		    .log(Level.SEVERE, Translations.getTranslation("Config.error.jsonInvalid"), ex);
 	    applyDefaults();
 	} catch (NotEnoughNamesException ex) {
-	    Logger.getLogger(ConfigManager.class.getName())
-		    .log(Level.SEVERE, TranslationManager.getTranslation("Config.error.notEnoughNames"), ex);
+	    Logger.getLogger(Configs.class.getName())
+		    .log(Level.SEVERE, Translations.getTranslation("Config.error.notEnoughNames"), ex);
 	    applyDefaults();
 	}
     }
@@ -90,22 +90,22 @@ public final class ConfigManager {
 	try {
 	    loadConfigFile(filename);
 	} catch (FileNotFoundException ex) {
-	    String message = TranslationManager.getTranslation("Config.error.selectedFileNotFound");
-	    Logger.getLogger(ConfigManager.class.getName())
+	    String message = Translations.getTranslation("Config.error.selectedFileNotFound");
+	    Logger.getLogger(Configs.class.getName())
 		    .log(Level.INFO, message, ex);
 	    result = message;
 	} catch (IOException ex) {
-	    String message = TranslationManager.getTranslation("Config.error.ioError");
-	    Logger.getLogger(ConfigManager.class.getName()).log(Level.SEVERE, message, ex);
+	    String message = Translations.getTranslation("Config.error.ioError");
+	    Logger.getLogger(Configs.class.getName()).log(Level.SEVERE, message, ex);
 	    result = message;
 	} catch(JSONException ex) {
-	    String message = TranslationManager.getTranslation("Config.error.jsonInvalid");
-	    Logger.getLogger(ConfigManager.class.getName()).log(Level.SEVERE, message, ex);
+	    String message = Translations.getTranslation("Config.error.jsonInvalid");
+	    Logger.getLogger(Configs.class.getName()).log(Level.SEVERE, message, ex);
 	    result = message;
 	    loadDefaultConfigFile();
 	} catch (NotEnoughNamesException ex) {
-	    String message = TranslationManager.getTranslation("Config.error.notEnoughNames");
-	    Logger.getLogger(ConfigManager.class.getName()).log(Level.SEVERE, message, ex);
+	    String message = Translations.getTranslation("Config.error.notEnoughNames");
+	    Logger.getLogger(Configs.class.getName()).log(Level.SEVERE, message, ex);
 	    result = message;
 	}
 	return result;
@@ -203,11 +203,11 @@ public final class ConfigManager {
 	    fw.flush();
 	    fw.close();
 	} catch (JSONException ex) {
-	    Logger.getLogger(ConfigManager.class.getName())
+	    Logger.getLogger(Configs.class.getName())
 		    .log(Level.SEVERE, "Somehow failed to write JSON object.", ex);
 	    System.out.println("Somehow failed to write JSON object.");
 	} catch (IOException ex) {
-	    Logger.getLogger(ConfigManager.class.getName())
+	    Logger.getLogger(Configs.class.getName())
 		    .log(Level.SEVERE, "Failed to write file.", ex);
 	    System.out.print("Failed to write file.");
 	}

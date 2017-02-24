@@ -89,9 +89,9 @@ public class Rennschnecke {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(TranslationManager.getTranslation("Rennschnecke.name", getName())).append("; ");
-        builder.append(TranslationManager.getTranslation("Rennschnecke.race", getRace())).append("; ");
-        builder.append(TranslationManager.getTranslation("Rennschnecke.progress", getProgress()));
+        builder.append(Translations.getTranslation("Rennschnecke.name", getName())).append("; ");
+        builder.append(Translations.getTranslation("Rennschnecke.race", getRace())).append("; ");
+        builder.append(Translations.getTranslation("Rennschnecke.progress", getProgress()));
         return builder.toString();
     }
     
@@ -101,8 +101,16 @@ public class Rennschnecke {
      */
     public String toBetString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(TranslationManager.getTranslation("Rennschnecke.name", getName())).append("; ");
-        builder.append(TranslationManager.getTranslation("Rennschnecke.race", getRace()));
+        builder.append(Translations.getTranslation("Rennschnecke.name", getName())).append("; ");
+        builder.append(Translations.getTranslation("Rennschnecke.race", getRace()));
         return builder.toString();
+    }
+    
+    public boolean strengen(String bettor) {
+	if(name.equals("Blümchen") && bettor.equals("Wolfi")) {
+	    maxSpeed += 3;
+	    return true;
+	}
+	return false;
     }
 }
