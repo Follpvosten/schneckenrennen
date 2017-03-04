@@ -132,7 +132,7 @@ public final class Configs {
 
     /**
      * Generates the default config values and saves them to the config file if
-     * it doesn't exist.
+     * it doesn't already exist.
      */
     private static void applyDefaults() {
 	betFactor = 1.5;
@@ -143,7 +143,8 @@ public final class Configs {
 		"Waldi", "Luna", "Schnurri", "Sushi",
 		"Deidre", "Wolfi", "Blümchen", "Bo-bobo",
 		"Günther", "Horst-Dieter", "Kevin", "Moritz",
-		"Anthony", "Buchwirt", "Linda", "Eckhardt"
+		"Anthony", "Buchwirt", "Linda", "Eckhardt",
+		"Pui", "MonoMono"
 	));
 	raceNames = new ArrayList<>(Arrays.asList(
 		"Rennen des Jahres", "Irgendein Rennen", "Rennen Nummer Drei",
@@ -161,7 +162,7 @@ public final class Configs {
 		"Bim", "Tram", "Zug", "Kreuzfahrtschiff",
 		"UFO", "Banane", "Meerschweinchen", "Treppenstufe",
 		"Schienenersatzverkehr", "Wanderer", "Schwimmer", "Knirps",
-		"Tänzerin", "Aromalady"
+		"Tänzerin", "Aromalady", "Puininchen", "Blümchen"
 	));
 
 	if (!new File(DEFAULT_CONFIG).exists()) {

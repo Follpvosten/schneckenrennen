@@ -116,9 +116,12 @@ public class WettDialog extends JDialog {
                     nameInput.getText(),
                     snailList.getSelectedValue()
             );
-	    if(snailList.getSelectedValue().getName().equals("Blümchen")) {
-		if(snailList.getSelectedValue().strengen(nameInput.getText())) {
-		    JOptionPane.showMessageDialog(this, "Blümchen wird sich ganz doll strengen!");
+	    if(snailList.getSelectedValue().getName().equals("Blümchen") ||
+		    snailList.getSelectedValue().getName().equals("MonoMono") ||
+		    snailList.getSelectedValue().getName().equals("Pui")) {
+		String sresult = snailList.getSelectedValue().strengen(nameInput.getText());
+		if(sresult != null) {
+		    JOptionPane.showMessageDialog(this, sresult);
 		}
 	    }
             setVisible(false);

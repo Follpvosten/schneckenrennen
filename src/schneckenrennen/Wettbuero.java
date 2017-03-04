@@ -99,31 +99,37 @@ public class Wettbuero {
         }
         StringBuilder builder = new StringBuilder();
 	ArrayList<Rennschnecke> schneggen = rennen.getSchnecken();
-        //Rennschnecke[] schneggen = rennen.getSchneckenArray();
         for (int i = 0; i < schneggen.size(); i++) {
             int place = schneggen.get(i).isWinner() ? 1 : i+1;
             builder.append(place).append(".: ").append(schneggen.get(i).toString());
             if (schneggen.get(i).isWinner()) {
                 for (Wette wette : wetten) {
                     if (wette.schnecke == schneggen.get(i)) {
-                        builder.append(" (").append(wette.spielerName).append(" gewinnt ");
-                        builder.append(String.format("%.2f", wette.einsatz * factor)).append("€)");
+                        //builder.append(" (").append(wette.spielerName).append(" gewinnt ");
+                        //builder.append(String.format("%.2f", wette.einsatz * factor)).append("€)");
+			builder.append(" ");
+			builder.append(
+				Translations.get(
+					"Wettbuero.winner",
+					wette.spielerName,
+					wette.einsatz * factor)
+			);
                     }
                 }
             }
             builder.append("\n");
         }
-        StringBuilder loserBuilder = new StringBuilder("\n(Verlierer:");
+        StringBuilder loserBuilder = new StringBuilder();
         int loserCount = 0;
         for (Wette wette : wetten) {
             if (!wette.schnecke.isWinner()) {
                 loserBuilder.append(" ").append(wette.spielerName).append(" (");
-                loserBuilder.append(String.format("%.2f", wette.einsatz)).append("€);");
+                loserBuilder.append(String.format("€ %.2f);", wette.einsatz)); //.append(");");
                 loserCount++;
             }
         }
-        loserBuilder.append(")");
-        if(loserCount > 0) builder.append(loserBuilder);
+        if(loserCount > 0)
+	    builder.append(Translations.get("Wettbuero.losers", loserBuilder));
 
         return builder.toString();
     }
@@ -132,7 +138,7 @@ public class Wettbuero {
      * Returns the factor the winner's bet is multiplied with.
      * @return 
      */
-    public double getFactor() {
+    public double getBetFactor() {
 	return factor;
     }
 }

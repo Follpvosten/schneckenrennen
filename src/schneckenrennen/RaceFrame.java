@@ -290,7 +290,7 @@ public class RaceFrame extends javax.swing.JFrame {
 		= new WettDialog(
 			this,
 			currentRace.getSchnecken(),
-			wettbuero.getFactor()
+			wettbuero.getBetFactor()
 		).showDialog();
 	if (newWette != null) {
 	    wettbuero.placeBet(newWette);

@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 /**
  * A simple data class representing a racing snail.
+ *
  * @author Follpvosten
  */
 public class Rennschnecke {
@@ -15,16 +16,17 @@ public class Rennschnecke {
     /**
      * Creates a new racing snail. Its won value is set to false and its
      * progress is set to 0.
+     *
      * @param maxSpeed The maximum speed a snail can move at.
      * @param name The snail's name.
      * @param race The snail's race.
      */
     public Rennschnecke(int maxSpeed, String name, String race) {
-        this.maxSpeed = maxSpeed;
-        this.name = name;
-        this.race = race;
-        this.progress = 0;
-        this.hasWon = false;
+	this.maxSpeed = maxSpeed;
+	this.name = name;
+	this.race = race;
+	this.progress = 0;
+	this.hasWon = false;
     }
 
     /**
@@ -32,90 +34,99 @@ public class Rennschnecke {
      * snails max speed to the snails progress.
      */
     public void creep() {
-        progress += RaceFrame.Random.nextInt(maxSpeed) + 1;
+	progress += RaceFrame.Random.nextInt(maxSpeed) + 1;
     }
 
     /**
      * Makes sure the snail isn't past the goal and sets its hasWon flag.
+     *
      * @param goal The goal of the current race.
      */
     public void win(int goal) {
-        progress = goal;
-        hasWon = true;
+	progress = goal;
+	hasWon = true;
     }
 
     /**
      * Returns the snails max speed.
-     * @return 
+     *
+     * @return
      */
     public int getMaxSpeed() {
-        return maxSpeed;
+	return maxSpeed;
     }
 
     /**
      * Returns the snails current progress.
-     * @return 
+     *
+     * @return
      */
     public int getProgress() {
-        return progress;
+	return progress;
     }
 
     /**
      * Returns the snails name.
-     * @return 
+     *
+     * @return
      */
     public String getName() {
-        return name;
+	return name;
     }
 
     /**
      * Returns the snails race name.
-     * @return 
+     *
+     * @return
      */
     public String getRace() {
-        return race;
+	return race;
     }
 
     /**
      * Returns a value indicating if the snail has won the race.
-     * @return 
+     *
+     * @return
      */
     public boolean isWinner() {
-        return hasWon;
+	return hasWon;
     }
 
     /**
      * Returns the snail's info as String to be displayed in the RaceFrame.
-     * @return 
+     *
+     * @return
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(Translations.get("Rennschnecke.name", getName())).append("; ");
-        builder.append(Translations.get("Rennschnecke.race", getRace())).append("; ");
-        builder.append(Translations.get("Rennschnecke.progress", getProgress()));
-        return builder.toString();
+	StringBuilder builder = new StringBuilder();
+	builder.append(Translations.get("Rennschnecke.name", getName())).append("; ");
+	builder.append(Translations.get("Rennschnecke.race", getRace())).append("; ");
+	builder.append(Translations.get("Rennschnecke.progress", getProgress()));
+	return builder.toString();
     }
-    
+
     /**
      * Returns the snail's info as a String to be displayed in the WettDialog.
-     * @return 
+     *
+     * @return
      */
     public String toBetString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(Translations.get("Rennschnecke.name", getName())).append("; ");
-        builder.append(Translations.get("Rennschnecke.race", getRace()));
-        return builder.toString();
+	StringBuilder builder = new StringBuilder();
+	builder.append(Translations.get("Rennschnecke.name", getName())).append("; ");
+	builder.append(Translations.get("Rennschnecke.race", getRace()));
+	return builder.toString();
     }
-    
+
     /**
      * Loads a snail from the given JSON object
+     *
      * @param json The snail serialized to JSON
      * @return The deserialized snail as Rennschnecke
      */
     public static Rennschnecke fromJSON(JSONObject json) {
-	Rennschnecke result =
-		new Rennschnecke(
+	Rennschnecke result
+		= new Rennschnecke(
 			json.getInt("maxSpeed"),
 			json.getString("name"),
 			json.getString("race")
@@ -124,9 +135,10 @@ public class Rennschnecke {
 	result.hasWon = json.getBoolean("hasWon");
 	return result;
     }
-    
+
     /**
      * Serializes the snail to a JSON object.
+     *
      * @return A JSON object containing the data of the snail.
      */
     public JSONObject toJSON() {
@@ -138,12 +150,22 @@ public class Rennschnecke {
 	result.put("hasWon", hasWon);
 	return result;
     }
-    
-    public boolean strengen(String bettor) {
-	if(name.equals("Blümchen") && bettor.equals("Wolfi")) {
-	    maxSpeed += 3;
-	    return true;
+
+    public String strengen(String bettor) {
+	if (bettor.equals("Wolfi")) {
+	    if (name.equals("Blümchen")) {
+		maxSpeed += 3;
+		return "Blümchen wird sich ganz doll strengen!";
+	    }
+	    else if(name.equals("MonoMono")) {
+		maxSpeed += 3;
+		return RaceFrame.Random.nextInt(2) == 0 ? "MonoMono erhält Mononium!" : "MonoMono erhält Mewnium!";
+	    }
+	    else if(name.equals("Pui")) {
+		maxSpeed += 3;
+		return "PUUUUI!";
+	    }
 	}
-	return false;
+	return null;
     }
 }
