@@ -18,6 +18,7 @@ package schneckenrennen;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,8 +38,12 @@ public class Saves {
 	return Rennen.fromJSON(new JSONObject(new String(data, "UTF-8")));
     }
     
-    public static void saveRace(Rennen race) throws IOException {
-	
+    public static void saveRace(Rennen race, String filename) throws IOException {
+	File file = new File(filename);
+	FileWriter fw = new FileWriter(file, false);
+	fw.write(race.toJSON().toString());
+	fw.flush();
+	fw.close();
     }
     
 }

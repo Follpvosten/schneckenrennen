@@ -105,8 +105,6 @@ public class Wettbuero {
             if (schneggen.get(i).isWinner()) {
                 for (Wette wette : wetten) {
                     if (wette.schnecke == schneggen.get(i)) {
-                        //builder.append(" (").append(wette.spielerName).append(" gewinnt ");
-                        //builder.append(String.format("%.2f", wette.einsatz * factor)).append("€)");
 			builder.append(" ");
 			builder.append(
 				Translations.get(
@@ -124,7 +122,7 @@ public class Wettbuero {
         for (Wette wette : wetten) {
             if (!wette.schnecke.isWinner()) {
                 loserBuilder.append(" ").append(wette.spielerName).append(" (");
-                loserBuilder.append(String.format("€ %.2f);", wette.einsatz)); //.append(");");
+                loserBuilder.append(String.format("€ %.2f);", wette.einsatz));
                 loserCount++;
             }
         }
